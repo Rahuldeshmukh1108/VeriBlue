@@ -1,0 +1,205 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: oklch(0.98 0.005 120); /* Light green-tinted background */
+  --foreground: oklch(0.25 0.01 120); /* Dark grey-green for text */
+  --card: oklch(1 0 0); /* Pure white for cards */
+  --card-foreground: oklch(0.25 0.01 120); /* Dark grey-green for card text */
+  --popover: oklch(1 0 0); /* White for popovers */
+  --popover-foreground: oklch(0.25 0.01 120); /* Dark grey-green for popover text */
+  --primary: oklch(0.55 0.15 145); /* Green for primary actions */
+  --primary-foreground: oklch(1 0 0); /* White text on primary */
+  --secondary: oklch(0.6 0.2 220); /* Blue for secondary actions */
+  --secondary-foreground: oklch(1 0 0); /* White text on secondary */
+  --muted: oklch(0.96 0.005 120); /* Light muted background */
+  --muted-foreground: oklch(0.5 0.01 120); /* Muted text */
+  --accent: oklch(0.8 0.15 85); /* Soft yellow for accents */
+  --accent-foreground: oklch(0.25 0.01 120); /* Dark text on accent */
+  --destructive: oklch(0.6 0.2 25); /* Red for destructive actions */
+  --destructive-foreground: oklch(1 0 0); /* White text on destructive */
+  --border: oklch(0.9 0.005 120); /* Light border */
+  --input: oklch(1 0 0); /* White input fields */
+  --ring: oklch(0.55 0.15 145 / 0.3); /* Green focus ring */
+  --chart-1: oklch(0.55 0.15 145); /* Green for charts */
+  --chart-2: oklch(0.6 0.2 220); /* Blue for charts */
+  --chart-3: oklch(0.8 0.15 85); /* Yellow for charts */
+  --chart-4: oklch(0.65 0.18 180); /* Teal for charts */
+  --chart-5: oklch(0.7 0.12 260); /* Purple for charts */
+  --radius: 0.75rem; /* Rounded corners */
+  --sidebar: oklch(1 0 0); /* White sidebar */
+  --sidebar-foreground: oklch(0.25 0.01 120); /* Dark sidebar text */
+  --sidebar-primary: oklch(0.55 0.15 145); /* Green sidebar highlights */
+  --sidebar-primary-foreground: oklch(1 0 0); /* White text on sidebar highlights */
+  --sidebar-accent: oklch(0.8 0.15 85); /* Yellow sidebar accents */
+  --sidebar-accent-foreground: oklch(0.25 0.01 120); /* Dark text on sidebar accents */
+  --sidebar-border: oklch(0.9 0.005 120); /* Light sidebar borders */
+  --sidebar-ring: oklch(0.55 0.15 145 / 0.3); /* Green sidebar focus ring */
+}
+
+.dark {
+  --background: oklch(0.08 0.01 120); /* Dark green-tinted background */
+  --foreground: oklch(0.95 0.005 120); /* Light text */
+  --card: oklch(0.12 0.01 120); /* Dark card background */
+  --card-foreground: oklch(0.95 0.005 120); /* Light card text */
+  --popover: oklch(0.12 0.01 120); /* Dark popover */
+  --popover-foreground: oklch(0.95 0.005 120); /* Light popover text */
+  --primary: oklch(0.6 0.18 145); /* Brighter green for dark mode */
+  --primary-foreground: oklch(0.08 0.01 120); /* Dark text on primary */
+  --secondary: oklch(0.65 0.22 220); /* Brighter blue for dark mode */
+  --secondary-foreground: oklch(0.08 0.01 120); /* Dark text on secondary */
+  --muted: oklch(0.15 0.01 120); /* Dark muted background */
+  --muted-foreground: oklch(0.7 0.005 120); /* Light muted text */
+  --accent: oklch(0.75 0.18 85); /* Bright yellow for dark mode */
+  --accent-foreground: oklch(0.08 0.01 120); /* Dark text on accent */
+  --destructive: oklch(0.65 0.22 25); /* Bright red for dark mode */
+  --destructive-foreground: oklch(0.95 0.005 120); /* Light text on destructive */
+  --border: oklch(0.2 0.01 120); /* Dark border */
+  --input: oklch(0.15 0.01 120); /* Dark input fields */
+  --ring: oklch(0.6 0.18 145 / 0.4); /* Bright green focus ring */
+  --chart-1: oklch(0.6 0.18 145); /* Bright green for charts */
+  --chart-2: oklch(0.65 0.22 220); /* Bright blue for charts */
+  --chart-3: oklch(0.75 0.18 85); /* Bright yellow for charts */
+  --chart-4: oklch(0.7 0.2 180); /* Bright teal for charts */
+  --chart-5: oklch(0.75 0.15 260); /* Bright purple for charts */
+  --sidebar: oklch(0.1 0.01 120); /* Dark sidebar */
+  --sidebar-foreground: oklch(0.95 0.005 120); /* Light sidebar text */
+  --sidebar-primary: oklch(0.6 0.18 145); /* Bright green sidebar highlights */
+  --sidebar-primary-foreground: oklch(0.08 0.01 120); /* Dark text on sidebar highlights */
+  --sidebar-accent: oklch(0.75 0.18 85); /* Bright yellow sidebar accents */
+  --sidebar-accent-foreground: oklch(0.08 0.01 120); /* Dark text on sidebar accents */
+  --sidebar-border: oklch(0.2 0.01 120); /* Dark sidebar borders */
+  --sidebar-ring: oklch(0.6 0.18 145 / 0.4); /* Bright green sidebar focus ring */
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* RainbowKit Modal Styles */
+  [data-rk] {
+    --rk-colors-accentColor: var(--primary);
+    --rk-colors-accentColorForeground: var(--primary-foreground);
+    --rk-colors-actionButtonBorder: var(--border);
+    --rk-colors-actionButtonBorderMobile: var(--border);
+    --rk-colors-actionButtonSecondaryBackground: var(--secondary);
+    --rk-colors-closeButton: var(--muted-foreground);
+    --rk-colors-closeButtonBackground: var(--muted);
+    --rk-colors-connectButtonBackground: var(--primary);
+    --rk-colors-connectButtonBackgroundError: var(--destructive);
+    --rk-colors-connectButtonInnerBackground: var(--primary);
+    --rk-colors-connectButtonText: var(--primary-foreground);
+    --rk-colors-connectButtonTextError: var(--destructive-foreground);
+    --rk-colors-connectionIndicator: var(--accent);
+    --rk-colors-downloadBottomCardBackground: var(--card);
+    --rk-colors-downloadTopCardBackground: var(--card);
+    --rk-colors-error: var(--destructive);
+    --rk-colors-generalBorder: var(--border);
+    --rk-colors-generalBorderDim: var(--border);
+    --rk-colors-menuItemBackground: var(--card);
+    --rk-colors-modalBackdrop: rgba(0, 0, 0, 0.5);
+    --rk-colors-modalBackground: var(--card);
+    --rk-colors-modalBorder: var(--border);
+    --rk-colors-modalText: var(--card-foreground);
+    --rk-colors-modalTextDim: var(--muted-foreground);
+    --rk-colors-modalTextSecondary: var(--muted-foreground);
+    --rk-colors-profileAction: var(--muted);
+    --rk-colors-profileActionHover: var(--accent);
+    --rk-colors-profileForeground: var(--card);
+    --rk-colors-selectedOptionBorder: var(--primary);
+    --rk-colors-standby: var(--muted-foreground);
+    --rk-fonts-body: var(--font-sans);
+    --rk-radii-actionButton: var(--radius);
+    --rk-radii-connectButton: var(--radius);
+    --rk-radii-menuButton: var(--radius);
+    --rk-radii-modal: var(--radius);
+    --rk-radii-modalMobile: var(--radius);
+  }
+
+  /* RainbowKit Button Styles */
+  ._1am14413 {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background;
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+    @apply h-10 py-2 px-4;
+  }
+
+  /* RainbowKit Modal Styles */
+  ._1vwt0cg0 {
+    @apply fixed inset-0 z-50 bg-background/80 backdrop-blur-sm;
+  }
+
+  ._1vwt0cg1 {
+    @apply fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg translate-x-1/2 translate-y-1/2 gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg;
+  }
+
+  /* Wallet Option Styles */
+  ._1vwt0cg2 {
+    @apply flex items-center justify-between rounded-lg border p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors;
+  }
+
+  /* Account Modal Styles */
+  ._1vwt0cg3 {
+    @apply flex flex-col space-y-4 p-4;
+  }
+
+  ._1vwt0cg4 {
+    @apply flex items-center space-x-3 p-3 rounded-lg bg-muted;
+  }
+
+  ._1vwt0cg5 {
+    @apply text-sm font-medium;
+  }
+
+  ._1vwt0cg6 {
+    @apply text-xs text-muted-foreground;
+  }
+}
