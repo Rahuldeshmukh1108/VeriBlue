@@ -111,7 +111,7 @@ export default function WalletPage() {
           <div className="flex items-center space-x-4">
             <Link href="/dashboard/developer" className="flex items-center space-x-2">
               <Leaf className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold">Carbon Fiesta</span>
+              <span className="text-xl font-bold">VeriBlue</span>
             </Link>
             <Badge variant="secondary">Developer</Badge>
           </div>

@@ -43,16 +43,16 @@ export default function DashboardLayout({ children, userRole, userName = "User" 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Navigation Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
+      <header className="bg-white/80 backdrop-blur-sm border-b border-black-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             {/* Logo and Navigation */}
             <div className="flex items-center gap-8">
               <Link href="/" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-blue-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">CF</span>
+                <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-blue-200 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">VB</span>
                 </div>
-                <span className="font-bold text-xl text-gray-900">Carbon Fiesta</span>
+                <span className="text-xl font-bold">VeriBlue</span>
               </Link>
 
               <nav className="hidden md:flex items-center gap-6">
@@ -64,14 +64,17 @@ export default function DashboardLayout({ children, userRole, userName = "User" 
                   Dashboard
                 </Link>
                 {userRole === "buyer" && (
-                  <Link href="/dashboard/buyer/marketplace" className="text-gray-600 hover:text-gray-900">
+                  <Link href="/dashboard/buyer/marketplace" className="text-black-600 hover:text-gray-900">
                     Marketplace
                   </Link>
                 )}
                 {userRole === "developer" && (
-                  <Link href="/dashboard/developer/projects" className="text-gray-600 hover:text-gray-900">
+                  <a
+                    className="text-sm font-medium transition-colors px-3 py-2 rounded-md hover:text-black-200 focus:text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-muted-foreground hover:bg-muted"
+                    href="/dashboard/developer/projects"
+                  >
                     Projects
-                  </Link>
+                  </a>
                 )}
                 {userRole === "admin" && (
                   <Link href="/dashboard/admin/verifiers" className="text-gray-600 hover:text-gray-900">

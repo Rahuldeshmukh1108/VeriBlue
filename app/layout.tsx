@@ -11,7 +11,7 @@ import { TransactionToast } from "@/components/blockchain/transaction-toast"
 import { TransactionMonitor } from "@/components/blockchain/transaction-monitor"
 
 export const metadata: Metadata = {
-  title: "Carbon Fiesta - Transparent Carbon Credit Marketplace",
+  title: "VeriBlue - Transparent Carbon Credit Marketplace",
   description:
     "Connect developers, verifiers, and buyers in a transparent ecosystem for verified carbon credits with real-time impact tracking.",
   generator: "v0.app",
