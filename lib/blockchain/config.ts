@@ -10,7 +10,7 @@ export const CONTRACTS = {
 } as const
 
 export const config = getDefaultConfig({
-  appName: "Carbon Fiesta",
+  appName: "VeriBlue",
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "demo-project-id",
   chains: [mainnet, polygon, arbitrum, base, sepolia],
   ssr: true,

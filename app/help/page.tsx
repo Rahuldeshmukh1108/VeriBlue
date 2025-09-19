@@ -14,7 +14,7 @@ export default function HelpPage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Leaf className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold text-foreground">Carbon Fiesta</span>
+            <span className="text-2xl font-bold text-foreground">VeriBlue</span>
           </div>
           <div className="flex items-center space-x-4">
             <Link href="/">
@@ -42,7 +42,7 @@ export default function HelpPage() {
             <span className="text-primary block">Help You?</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto text-pretty">
-            Find answers to common questions, learn how to use Carbon Fiesta, and get the support you need to succeed.
+            Find answers to common questions, learn how to use VeriBlue, and get the support you need to succeed.
           </p>
 
           {/* Search Bar */}
@@ -64,7 +64,7 @@ export default function HelpPage() {
               </CardHeader>
               <CardContent className="text-center">
                 <p className="text-muted-foreground">
-                  Learn the basics of using Carbon Fiesta and setting up your account.
+                  Learn the basics of using VeriBlue and setting up your account.
                 </p>
               </CardContent>
             </Card>
@@ -109,12 +109,12 @@ export default function HelpPage() {
                   <AccordionTrigger className="px-6 py-4 hover:no-underline">
                     <div className="flex items-center gap-3">
                       <HelpCircle className="h-5 w-5 text-primary" />
-                      <span className="text-left font-semibold">What is Carbon Fiesta and how does it work?</span>
+                      <span className="text-left font-semibold">What is VeriBlue and how does it work?</span>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="px-6 pb-4">
                     <p className="text-muted-foreground">
-                      Carbon Fiesta is a transparent carbon credit marketplace that connects project developers,
+                      VeriBlue is a transparent carbon credit marketplace that connects project developers,
                       verifiers, and buyers. We use blockchain technology, IoT sensors, and AI to ensure the
                       authenticity and impact of carbon credits. Project developers submit their projects, verifiers
                       conduct independent assessments, and buyers can purchase verified credits with full transparency
@@ -209,7 +209,7 @@ export default function HelpPage() {
                   <AccordionTrigger className="px-6 py-4 hover:no-underline">
                     <div className="flex items-center gap-3">
                       <HelpCircle className="h-5 w-5 text-destructive" />
-                      <span className="text-left font-semibold">What fees does Carbon Fiesta charge?</span>
+                      <span className="text-left font-semibold">What fees does VeriBlue charge?</span>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="px-6 pb-4">
@@ -255,9 +255,9 @@ export default function HelpPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Leaf className="h-6 w-6 text-primary" />
-              <span className="text-lg font-semibold">Carbon Fiesta</span>
+              <span className="text-lg font-semibold">VeriBlue</span>
             </div>
-            <p className="text-muted-foreground">© 2024 Carbon Fiesta. Building a sustainable future.</p>
+            <p className="text-muted-foreground">© 2024 VeriBlue. Building a sustainable future.</p>
           </div>
         </div>
       </footer>

@@ -12,7 +12,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Leaf className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold text-foreground">Carbon Fiesta</span>
+            <span className="text-2xl font-bold text-foreground">VeriBlue</span>
           </div>
           <div className="flex items-center space-x-4">
             <Link href="/">
@@ -36,7 +36,7 @@ export default function AboutPage() {
             Building a<span className="text-primary block">Transparent Future</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto text-pretty">
-            Carbon Fiesta is revolutionizing the carbon credit marketplace by bringing transparency, verification, and
+            VeriBlue is revolutionizing the carbon credit marketplace by bringing transparency, verification, and
             real-time impact tracking to climate action initiatives worldwide.
           </p>
         </div>
@@ -49,7 +49,7 @@ export default function AboutPage() {
             <div>
               <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Story</h2>
               <p className="text-lg text-muted-foreground mb-6">
-                Founded in 2024, Carbon Fiesta emerged from a simple observation: the carbon credit market lacked
+                Founded in 2024, VeriBlue emerged from a simple observation: the carbon credit market lacked
                 transparency and trust. Traditional systems were slow, opaque, and difficult to verify.
               </p>
               <p className="text-lg text-muted-foreground mb-6">
@@ -91,7 +91,7 @@ export default function AboutPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Values</h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              The principles that guide everything we do at Carbon Fiesta.
+              The principles that guide everything we do at VeriBlue.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -252,9 +252,9 @@ export default function AboutPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Leaf className="h-6 w-6 text-primary" />
-              <span className="text-lg font-semibold">Carbon Fiesta</span>
+              <span className="text-lg font-semibold">VeriBlue</span>
             </div>
-            <p className="text-muted-foreground">© 2024 Carbon Fiesta. Building a sustainable future.</p>
+            <p className="text-muted-foreground">© 2024 VeriBlue. Building a sustainable future.</p>
           </div>
         </div>
       </footer>

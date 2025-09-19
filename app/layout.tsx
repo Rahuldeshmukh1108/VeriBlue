@@ -12,7 +12,7 @@ import { Analytics } from "@vercel/analytics/react"
 import ClientOnly from "@/components/ClientOnly"
 import { BlockchainProvider } from "@/components/providers/blockchain-provider"
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Carbon Fiesta - Transparent Carbon Credit Marketplace",
   description:
     "Connect developers, verifiers, and buyers in a transparent ecosystem for verified carbon credits with real-time impact tracking.",

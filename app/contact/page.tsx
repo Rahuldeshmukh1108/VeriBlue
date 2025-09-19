@@ -16,7 +16,7 @@ export default function ContactPage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Leaf className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold text-foreground">Carbon Fiesta</span>
+            <span className="text-2xl font-bold text-foreground">VeriBlue</span>
           </div>
           <div className="flex items-center space-x-4">
             <Link href="/">
@@ -197,7 +197,7 @@ export default function ContactPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Quick answers to common questions about Carbon Fiesta.
+              Quick answers to common questions about VeriBlue.
             </p>
           </div>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -255,9 +255,9 @@ export default function ContactPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Leaf className="h-6 w-6 text-primary" />
-              <span className="text-lg font-semibold">Carbon Fiesta</span>
+              <span className="text-lg font-semibold">VeriBlue</span>
             </div>
-            <p className="text-muted-foreground">© 2024 Carbon Fiesta. Building a sustainable future.</p>
+            <p className="text-muted-foreground">© 2024 VeriBlue. Building a sustainable future.</p>
           </div>
         </div>
       </footer>

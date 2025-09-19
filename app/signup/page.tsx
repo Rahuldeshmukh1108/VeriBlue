@@ -81,7 +81,7 @@ export default function SignupPage() {
           </Link>
           <div className="flex items-center justify-center space-x-2 mb-4">
             <Leaf className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold">Carbon Fiesta</span>
+            <span className="text-2xl font-bold">VeriBlue</span>
           </div>
         </div>
 
