@@ -21,8 +21,11 @@ import {
   Clock,
   AlertTriangle,
   Eye,
+  Home,
+  UserCircle,
 } from "lucide-react"
 import { UserApprovalModal } from "@/components/verifier/user-approval-modal"
+import Link from "next/link"
 
 // TypeScript interfaces for queue data
 interface UserApplication {
@@ -181,8 +184,7 @@ export default function VerificationQueue() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
-      {/* Navigation Header */}
-      <nav className="border-b bg-card/80 backdrop-blur-sm sticky top-0 z-50">
+      <nav className="border-b bg-card/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Shield className="h-8 w-8 text-primary" />
@@ -192,38 +194,39 @@ export default function VerificationQueue() {
             </Badge>
           </div>
           <div className="flex items-center space-x-4">
-            <Link href="/dashboard/verifier" className="flex items-center space-x-2">
-              <Leaf className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold">Carbon Fiesta</span>
+            <Link href="/dashboard/verifier">
+              <Button variant="outline" size="sm" className="hover:bg-primary/10 transition-colors bg-transparent">
+                <Home className="h-4 w-4 mr-2" />
+                Dashboard
+              </Button>
             </Link>
-            <Badge variant="secondary">Verifier</Badge>
-          </div>
-          <Link href="/dashboard/verifier">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
-            </Button>
-            <Avatar>
+            <Link href="/dashboard/verifier/profile">
+              <Button variant="outline" size="sm" className="hover:bg-primary/10 transition-colors bg-transparent">
+                <UserCircle className="h-4 w-4 mr-2" />
+                Profile
+              </Button>
+            </Link>
+            <Avatar className="ring-2 ring-primary/20 hover:ring-primary/40 transition-all cursor-pointer">
               <AvatarImage src="/placeholder.svg" alt="Dr. Elena Rodriguez" />
-              <AvatarFallback>ER</AvatarFallback>
+              <AvatarFallback className="bg-primary/10 text-primary font-semibold">ER</AvatarFallback>
             </Avatar>
           </div>
         </div>
       </nav>
 
       <div className="container mx-auto px-6 py-8">
-        {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Verification Queue</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-4xl font-bold text-foreground mb-3 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            Verification Queue
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl">
             Review and process user applications and project reports awaiting verification
           </p>
         </div>
 
-        {/* Filters and Search */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <Card className="mb-6 shadow-sm border-primary/10">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-lg">
               <Filter className="h-5 w-5 text-primary" />
               Filters & Search
             </CardTitle>
@@ -237,12 +240,12 @@ export default function VerificationQueue() {
                     placeholder="Search by name, organization, or project..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 border-primary/20 focus:border-primary/40 transition-colors"
                   />
                 </div>
               </div>
               <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                <SelectTrigger className="w-full md:w-40">
+                <SelectTrigger className="w-full md:w-40 border-primary/20 focus:border-primary/40">
                   <SelectValue placeholder="Priority" />
                 </SelectTrigger>
                 <SelectContent>
@@ -253,7 +256,7 @@ export default function VerificationQueue() {
                 </SelectContent>
               </Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full md:w-40">
+                <SelectTrigger className="w-full md:w-40 border-primary/20 focus:border-primary/40">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -266,14 +269,19 @@ export default function VerificationQueue() {
           </CardContent>
         </Card>
 
-        {/* Tabbed Interface */}
         <Tabs defaultValue="users" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="users" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1 rounded-lg">
+            <TabsTrigger
+              value="users"
+              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"
+            >
               <UserCheck className="h-4 w-4" />
               New User Approvals ({filteredUserApplications.length})
             </TabsTrigger>
-            <TabsTrigger value="reports" className="flex items-center gap-2">
+            <TabsTrigger
+              value="reports"
+              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"
+            >
               <FileText className="h-4 w-4" />
               Project Report Verifications ({filteredProjectReports.length})
             </TabsTrigger>
@@ -281,259 +289,301 @@ export default function VerificationQueue() {
 
           {/* User Approvals Tab */}
           <TabsContent value="users">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <UserCheck className="h-5 w-5 text-secondary" />
+            <Card className="shadow-sm border-primary/10">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <UserCheck className="h-6 w-6 text-secondary" />
                   User Applications Pending Review
                 </CardTitle>
-                <CardDescription>Review and approve new user registrations for the platform</CardDescription>
+                <CardDescription className="text-base">
+                  Review and approve new user registrations for the platform
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>User</TableHead>
-                      <TableHead>Organization</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Signup Date</TableHead>
-                      <TableHead>Documents</TableHead>
-                      <TableHead>Priority</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredUserApplications.map((application) => (
-                      <TableRow key={application.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-8 w-8">
-                              <AvatarFallback>
-                                {application.userName
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <p className="font-medium">{application.userName}</p>
-                              <p className="text-xs text-muted-foreground">{application.email}</p>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Building2 className="h-4 w-4 text-muted-foreground" />
-                            <span>{application.organization}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={application.role === "developer" ? "default" : "secondary"}>
-                            {application.role === "developer" ? (
-                              <>
-                                <User className="h-3 w-3 mr-1" />
-                                Developer
-                              </>
-                            ) : (
-                              <>
-                                <Building2 className="h-3 w-3 mr-1" />
-                                Buyer
-                              </>
-                            )}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4 text-muted-foreground" />
-                            {new Date(application.signupDate).toLocaleDateString()}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{application.documentsCount} docs</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              application.priority === "high"
-                                ? "destructive"
-                                : application.priority === "medium"
-                                  ? "secondary"
-                                  : "outline"
-                            }
-                          >
-                            {application.priority}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={application.status === "pending" ? "secondary" : "default"}>
-                            {application.status === "pending" ? (
-                              <>
-                                <Clock className="h-3 w-3 mr-1" />
-                                Pending
-                              </>
-                            ) : (
-                              <>
-                                <Eye className="h-3 w-3 mr-1" />
-                                Under Review
-                              </>
-                            )}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Button size="sm" variant="outline" onClick={() => handleReviewApplication(application.id)}>
-                            <Eye className="h-4 w-4 mr-2" />
-                            Review Application
-                          </Button>
-                        </TableCell>
+                <div className="rounded-lg border border-primary/10 overflow-hidden">
+                  <Table>
+                    <TableHeader className="bg-muted/30">
+                      <TableRow className="hover:bg-muted/50">
+                        <TableHead className="font-semibold">User</TableHead>
+                        <TableHead className="font-semibold">Organization</TableHead>
+                        <TableHead className="font-semibold">Role</TableHead>
+                        <TableHead className="font-semibold">Signup Date</TableHead>
+                        <TableHead className="font-semibold">Documents</TableHead>
+                        <TableHead className="font-semibold">Priority</TableHead>
+                        <TableHead className="font-semibold">Status</TableHead>
+                        <TableHead className="font-semibold">Actions</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredUserApplications.map((application) => (
+                        <TableRow key={application.id} className="hover:bg-muted/30 transition-colors">
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <Avatar className="h-10 w-10 ring-2 ring-primary/10">
+                                <AvatarFallback className="bg-primary/10 text-primary font-medium">
+                                  {application.userName
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <p className="font-medium text-foreground">{application.userName}</p>
+                                <p className="text-sm text-muted-foreground">{application.email}</p>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Building2 className="h-4 w-4 text-muted-foreground" />
+                              <span className="font-medium">{application.organization}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={application.role === "developer" ? "default" : "secondary"}
+                              className="font-medium"
+                            >
+                              {application.role === "developer" ? (
+                                <>
+                                  <User className="h-3 w-3 mr-1" />
+                                  Developer
+                                </>
+                              ) : (
+                                <>
+                                  <Building2 className="h-3 w-3 mr-1" />
+                                  Buyer
+                                </>
+                              )}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Calendar className="h-4 w-4 text-muted-foreground" />
+                              <span className="font-medium">
+                                {new Date(application.signupDate).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="font-medium">
+                              {application.documentsCount} docs
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                application.priority === "high"
+                                  ? "destructive"
+                                  : application.priority === "medium"
+                                    ? "secondary"
+                                    : "outline"
+                              }
+                              className="font-medium"
+                            >
+                              {application.priority === "high" && <AlertTriangle className="h-3 w-3 mr-1" />}
+                              {application.priority}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={application.status === "pending" ? "secondary" : "default"}
+                              className="font-medium"
+                            >
+                              {application.status === "pending" ? (
+                                <>
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  Pending
+                                </>
+                              ) : (
+                                <>
+                                  <Eye className="h-3 w-3 mr-1" />
+                                  Under Review
+                                </>
+                              )}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleReviewApplication(application.id)}
+                              className="hover:bg-primary hover:text-primary-foreground transition-colors"
+                            >
+                              <Eye className="h-4 w-4 mr-2" />
+                              Review Application
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
 
           {/* Project Reports Tab */}
           <TabsContent value="reports">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" />
+            <Card className="shadow-sm border-primary/10">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <FileText className="h-6 w-6 text-primary" />
                   Project Reports Awaiting Verification
                 </CardTitle>
-                <CardDescription>Audit MRV reports and verify carbon credit claims</CardDescription>
+                <CardDescription className="text-base">
+                  Audit MRV reports and verify carbon credit claims
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Project</TableHead>
-                      <TableHead>Developer</TableHead>
-                      <TableHead>Report Date</TableHead>
-                      <TableHead>Credits Claimed</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Waiting</TableHead>
-                      <TableHead>Priority</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredProjectReports.map((report) => (
-                      <TableRow key={report.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <FileText className="h-4 w-4 text-primary" />
-                            <span className="font-medium">{report.projectName}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Building2 className="h-4 w-4 text-muted-foreground" />
-                            <span>{report.developer}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4 text-muted-foreground" />
-                            {new Date(report.reportDate).toLocaleDateString()}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-right">
-                            <div className="font-medium">{report.creditsClaimed.toLocaleString()}</div>
-                            <div className="text-xs text-muted-foreground">credits</div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="capitalize">
-                            {report.reportType}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-sm">{report.daysWaiting}d</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              report.priority === "high"
-                                ? "destructive"
-                                : report.priority === "medium"
-                                  ? "secondary"
-                                  : "outline"
-                            }
-                          >
-                            {report.priority === "high" && <AlertTriangle className="h-3 w-3 mr-1" />}
-                            {report.priority}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={report.status === "pending" ? "secondary" : "default"}>
-                            {report.status === "pending" ? (
-                              <>
-                                <Clock className="h-3 w-3 mr-1" />
-                                Pending
-                              </>
-                            ) : (
-                              <>
-                                <Eye className="h-3 w-3 mr-1" />
-                                Under Review
-                              </>
-                            )}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Button size="sm" variant="outline">
-                            <Eye className="h-4 w-4 mr-2" />
-                            Begin Audit
-                          </Button>
-                        </TableCell>
+                <div className="rounded-lg border border-primary/10 overflow-hidden">
+                  <Table>
+                    <TableHeader className="bg-muted/30">
+                      <TableRow className="hover:bg-muted/50">
+                        <TableHead className="font-semibold">Project</TableHead>
+                        <TableHead className="font-semibold">Developer</TableHead>
+                        <TableHead className="font-semibold">Report Date</TableHead>
+                        <TableHead className="font-semibold">Credits Claimed</TableHead>
+                        <TableHead className="font-semibold">Type</TableHead>
+                        <TableHead className="font-semibold">Waiting</TableHead>
+                        <TableHead className="font-semibold">Priority</TableHead>
+                        <TableHead className="font-semibold">Status</TableHead>
+                        <TableHead className="font-semibold">Actions</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredProjectReports.map((report) => (
+                        <TableRow key={report.id} className="hover:bg-muted/30 transition-colors">
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <FileText className="h-4 w-4 text-primary" />
+                              <span className="font-medium">{report.projectName}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Building2 className="h-4 w-4 text-muted-foreground" />
+                              <span className="font-medium">{report.developer}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Calendar className="h-4 w-4 text-muted-foreground" />
+                              <span className="font-medium">{new Date(report.reportDate).toLocaleDateString()}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-right">
+                              <div className="font-bold text-primary">{report.creditsClaimed.toLocaleString()}</div>
+                              <div className="text-sm text-muted-foreground">credits</div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="capitalize font-medium">
+                              {report.reportType}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1">
+                              <Clock className="h-4 w-4 text-muted-foreground" />
+                              <span className="font-medium">{report.daysWaiting}d</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                report.priority === "high"
+                                  ? "destructive"
+                                  : report.priority === "medium"
+                                    ? "secondary"
+                                    : "outline"
+                              }
+                              className="font-medium"
+                            >
+                              {report.priority === "high" && <AlertTriangle className="h-3 w-3 mr-1" />}
+                              {report.priority}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={report.status === "pending" ? "secondary" : "default"}
+                              className="font-medium"
+                            >
+                              {report.status === "pending" ? (
+                                <>
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  Pending
+                                </>
+                              ) : (
+                                <>
+                                  <Eye className="h-3 w-3 mr-1" />
+                                  Under Review
+                                </>
+                              )}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Link href={`/dashboard/verifier/review/${report.id}`}>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="hover:bg-primary hover:text-primary-foreground transition-colors bg-transparent"
+                              >
+                                <Eye className="h-4 w-4 mr-2" />
+                                Begin Audit
+                              </Button>
+                            </Link>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
 
-        {/* Queue Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total Queue Items</CardTitle>
+          <Card className="shadow-sm border-primary/10 hover:shadow-md transition-shadow">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                Total Queue Items
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{userApplications.length + projectReports.length}</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="text-3xl font-bold text-primary mb-1">
+                {userApplications.length + projectReports.length}
+              </div>
+              <p className="text-sm text-muted-foreground">
                 {userApplications.length} users, {projectReports.length} reports
               </p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">High Priority Items</CardTitle>
+          <Card className="shadow-sm border-primary/10 hover:shadow-md transition-shadow">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                High Priority Items
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-destructive">
+              <div className="text-3xl font-bold text-destructive mb-1">
                 {[...userApplications, ...projectReports].filter((item) => item.priority === "high").length}
               </div>
-              <p className="text-xs text-muted-foreground">require immediate attention</p>
+              <p className="text-sm text-muted-foreground">require immediate attention</p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Average Wait Time</CardTitle>
+          <Card className="shadow-sm border-primary/10 hover:shadow-md transition-shadow">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                Average Wait Time
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-secondary">4.2</div>
-              <p className="text-xs text-muted-foreground">days in queue</p>
+              <div className="text-3xl font-bold text-secondary mb-1">4.2</div>
+              <p className="text-sm text-muted-foreground">days in queue</p>
             </CardContent>
           </Card>
         </div>

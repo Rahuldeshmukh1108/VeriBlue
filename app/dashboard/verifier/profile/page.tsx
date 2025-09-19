@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import Link from "next/link"
 import {
   Shield,
   Search,
@@ -165,10 +166,12 @@ export default function VerifierProfile() {
             </Badge>
           </div>
           <div className="flex items-center space-x-4">
-            <Button variant="outline" size="sm">
-              <Eye className="h-4 w-4 mr-2" />
-              Dashboard
-            </Button>
+            <Link href="/dashboard/verifier">
+              <Button variant="outline" size="sm" className="hover:bg-primary/10 transition-colors bg-transparent">
+                <Eye className="h-4 w-4 mr-2" />
+                Dashboard
+              </Button>
+            </Link>
             <Avatar>
               <AvatarImage src="/placeholder.svg" alt="Dr. Elena Rodriguez" />
               <AvatarFallback>ER</AvatarFallback>

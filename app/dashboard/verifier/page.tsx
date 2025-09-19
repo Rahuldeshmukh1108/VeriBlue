@@ -16,7 +16,10 @@ import {
   Calendar,
   Eye,
   UserCheck,
+  Settings,
+  BarChart3,
 } from "lucide-react"
+import Link from "next/link"
 
 // TypeScript interfaces for verifier data structures
 interface VerifierKPIData {
@@ -142,10 +145,18 @@ export default function VerifierDashboard() {
             </Badge>
           </div>
           <div className="flex items-center space-x-4">
-            <Button variant="outline" size="sm">
-              <Eye className="h-4 w-4 mr-2" />
-              Verification Queue
-            </Button>
+            <Link href="/dashboard/verifier/queue">
+              <Button variant="outline" size="sm" className="hover:bg-primary/10 transition-colors bg-transparent">
+                <Eye className="h-4 w-4 mr-2" />
+                Verification Queue
+              </Button>
+            </Link>
+            <Link href="/dashboard/verifier/profile">
+              <Button variant="ghost" size="sm" className="hover:bg-muted transition-colors">
+                <Settings className="h-4 w-4 mr-2" />
+                Profile
+              </Button>
+            </Link>
             <Avatar>
               <AvatarImage src={verifierProfile.avatar || "/placeholder.svg"} alt={verifierProfile.name} />
               <AvatarFallback>
@@ -217,7 +228,7 @@ export default function VerifierDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Priority Queue Snapshot */}
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-destructive" />
@@ -228,7 +239,10 @@ export default function VerifierDashboard() {
             <CardContent>
               <div className="space-y-4">
                 {priorityQueue.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
+                  >
                     <div className="flex items-center gap-3">
                       {item.type === "user_approval" ? (
                         <UserCheck className="h-4 w-4 text-secondary" />
@@ -257,15 +271,17 @@ export default function VerifierDashboard() {
                   </div>
                 ))}
               </div>
-              <Button className="w-full mt-4 bg-transparent" variant="outline">
-                <Eye className="h-4 w-4 mr-2" />
-                View Full Queue
-              </Button>
+              <Link href="/dashboard/verifier/queue">
+                <Button className="w-full mt-4 bg-transparent" variant="outline">
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Full Queue
+                </Button>
+              </Link>
             </CardContent>
           </Card>
 
           {/* Recent Activity */}
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-primary" />
@@ -276,7 +292,10 @@ export default function VerifierDashboard() {
             <CardContent>
               <div className="space-y-4">
                 {recentActivity.map((activity) => (
-                  <div key={activity.id} className="flex items-center gap-3 p-2">
+                  <div
+                    key={activity.id}
+                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors"
+                  >
                     <div className="flex-shrink-0">
                       {activity.type === "project_verified" && <CheckCircle className="h-4 w-4 text-primary" />}
                       {activity.type === "user_approved" && <UserCheck className="h-4 w-4 text-secondary" />}
@@ -301,7 +320,7 @@ export default function VerifierDashboard() {
         </div>
 
         {/* Verification Performance */}
-        <Card className="mb-8">
+        <Card className="mb-8 hover:shadow-lg transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-secondary" />
@@ -350,7 +369,7 @@ export default function VerifierDashboard() {
         </Card>
 
         {/* Quick Actions */}
-        <Card>
+        <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
@@ -360,22 +379,42 @@ export default function VerifierDashboard() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Button className="h-20 flex-col gap-2 bg-transparent" variant="outline">
-                <Users className="h-6 w-6" />
-                <span>Review User Applications</span>
-              </Button>
-              <Button className="h-20 flex-col gap-2 bg-transparent" variant="outline">
-                <FileText className="h-6 w-6" />
-                <span>Audit Project Reports</span>
-              </Button>
-              <Button className="h-20 flex-col gap-2 bg-transparent" variant="outline">
-                <Eye className="h-6 w-6" />
-                <span>View Public Profile</span>
-              </Button>
-              <Button className="h-20 flex-col gap-2 bg-transparent" variant="outline">
-                <TrendingUp className="h-6 w-6" />
-                <span>Performance Analytics</span>
-              </Button>
+              <Link href="/dashboard/verifier/queue?tab=users">
+                <Button
+                  className="h-20 flex-col gap-2 w-full hover:bg-primary/10 hover:scale-105 transition-all bg-transparent"
+                  variant="outline"
+                >
+                  <Users className="h-6 w-6" />
+                  <span className="text-center">Review User Applications</span>
+                </Button>
+              </Link>
+              <Link href="/dashboard/verifier/queue?tab=projects">
+                <Button
+                  className="h-20 flex-col gap-2 w-full hover:bg-primary/10 hover:scale-105 transition-all bg-transparent"
+                  variant="outline"
+                >
+                  <FileText className="h-6 w-6" />
+                  <span className="text-center">Audit Project Reports</span>
+                </Button>
+              </Link>
+              <Link href="/dashboard/verifier/profile">
+                <Button
+                  className="h-20 flex-col gap-2 w-full hover:bg-primary/10 hover:scale-105 transition-all bg-transparent"
+                  variant="outline"
+                >
+                  <Eye className="h-6 w-6" />
+                  <span className="text-center">View Public Profile</span>
+                </Button>
+              </Link>
+              <Link href="/dashboard/verifier/analytics">
+                <Button
+                  className="h-20 flex-col gap-2 w-full hover:bg-primary/10 hover:scale-105 transition-all bg-transparent"
+                  variant="outline"
+                >
+                  <BarChart3 className="h-6 w-6" />
+                  <span className="text-center">Performance Analytics</span>
+                </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>
