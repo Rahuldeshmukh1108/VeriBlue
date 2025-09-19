@@ -2,362 +2,541 @@
 
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { ArrowLeft, Search, Filter, Clock, MapPin, Calendar, Leaf, Eye, FileText } from "lucide-react"
-import Link from "next/link"
+import {
+  Shield,
+  Search,
+  Filter,
+  UserCheck,
+  FileText,
+  Calendar,
+  Building2,
+  User,
+  Clock,
+  AlertTriangle,
+  Eye,
+} from "lucide-react"
+import { UserApprovalModal } from "@/components/verifier/user-approval-modal"
 
-export default function VerificationQueuePage() {
+// TypeScript interfaces for queue data
+interface UserApplication {
+  id: string
+  userName: string
+  organization: string
+  role: "developer" | "buyer"
+  signupDate: string
+  email: string
+  status: "pending" | "under_review"
+  priority: "high" | "medium" | "low"
+  documentsCount: number
+}
+
+interface ProjectReport {
+  id: string
+  projectName: string
+  developer: string
+  reportDate: string
+  creditsClaimed: number
+  reportType: "quarterly" | "annual" | "milestone"
+  status: "pending" | "under_review"
+  priority: "high" | "medium" | "low"
+  daysWaiting: number
+}
+
+// Mock data for verification queue
+const userApplications: UserApplication[] = [
+  {
+    id: "1",
+    userName: "Marcus Thompson",
+    organization: "TechCorp Inc.",
+    role: "buyer",
+    signupDate: "2024-01-10",
+    email: "marcus@techcorp.com",
+    status: "pending",
+    priority: "high",
+    documentsCount: 8,
+  },
+  {
+    id: "2",
+    userName: "Sarah Kim",
+    organization: "EcoForest Solutions",
+    role: "developer",
+    signupDate: "2024-01-12",
+    email: "sarah@ecoforest.org",
+    status: "under_review",
+    priority: "medium",
+    documentsCount: 12,
+  },
+  {
+    id: "3",
+    userName: "David Rodriguez",
+    organization: "GreenTech Innovations",
+    role: "buyer",
+    signupDate: "2024-01-14",
+    email: "david@greentech.com",
+    status: "pending",
+    priority: "medium",
+    documentsCount: 6,
+  },
+  {
+    id: "4",
+    userName: "Lisa Chen",
+    organization: "Blue Carbon Initiative",
+    role: "developer",
+    signupDate: "2024-01-15",
+    email: "lisa@bluecarbon.org",
+    status: "pending",
+    priority: "low",
+    documentsCount: 10,
+  },
+]
+
+const projectReports: ProjectReport[] = [
+  {
+    id: "1",
+    projectName: "Amazon Rainforest Conservation",
+    developer: "EcoForest Solutions",
+    reportDate: "2024-01-08",
+    creditsClaimed: 2500,
+    reportType: "quarterly",
+    status: "pending",
+    priority: "high",
+    daysWaiting: 8,
+  },
+  {
+    id: "2",
+    projectName: "Mangrove Restoration Project",
+    developer: "Blue Carbon Initiative",
+    reportDate: "2024-01-10",
+    creditsClaimed: 1800,
+    reportType: "milestone",
+    status: "under_review",
+    priority: "medium",
+    daysWaiting: 6,
+  },
+  {
+    id: "3",
+    projectName: "Kenya Solar Farm Phase 2",
+    developer: "Solar Energy Co.",
+    reportDate: "2024-01-12",
+    creditsClaimed: 3200,
+    reportType: "annual",
+    status: "pending",
+    priority: "medium",
+    daysWaiting: 4,
+  },
+  {
+    id: "4",
+    projectName: "Indonesian Peatland Restoration",
+    developer: "Peatland Conservation Trust",
+    reportDate: "2024-01-14",
+    creditsClaimed: 1500,
+    reportType: "quarterly",
+    status: "pending",
+    priority: "low",
+    daysWaiting: 2,
+  },
+]
+
+export default function VerificationQueue() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
   const [priorityFilter, setPriorityFilter] = useState("all")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [selectedApplicationId, setSelectedApplicationId] = useState<string | null>(null)
+  const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false)
 
-  const projects = [
-    {
-      id: "PRJ-001",
-      name: "Amazon Reforestation Initiative",
-      developer: "EcoTech Solutions",
-      type: "Forestry & Land Use",
-      location: "Acre, Brazil",
-      credits: 50000,
-      priority: "High",
-      deadline: "2024-01-15",
-      status: "Awaiting",
-      submittedDate: "2024-01-01",
-      methodology: "VCS VM0009",
-      estimatedDuration: "3-4 weeks",
-    },
-    {
-      id: "PRJ-002",
-      name: "Solar Farm Development",
-      developer: "GreenEnergy Corp",
-      type: "Renewable Energy",
-      location: "Nairobi, Kenya",
-      credits: 25000,
-      priority: "Medium",
-      deadline: "2024-01-20",
-      status: "In Review",
-      submittedDate: "2023-12-15",
-      methodology: "CDM AMS-I.D",
-      estimatedDuration: "2-3 weeks",
-    },
-    {
-      id: "PRJ-003",
-      name: "Methane Capture Facility",
-      developer: "CleanTech Industries",
-      type: "Waste Management",
-      location: "Texas, USA",
-      credits: 15000,
-      priority: "Low",
-      deadline: "2024-01-25",
-      status: "Awaiting",
-      submittedDate: "2024-01-05",
-      methodology: "CDM AM0001",
-      estimatedDuration: "2-3 weeks",
-    },
-    {
-      id: "PRJ-004",
-      name: "Mangrove Restoration Project",
-      developer: "Ocean Restore Inc",
-      type: "Forestry & Land Use",
-      location: "Palawan, Philippines",
-      credits: 18000,
-      priority: "High",
-      deadline: "2024-01-18",
-      status: "In Review",
-      submittedDate: "2023-12-20",
-      methodology: "VCS VM0033",
-      estimatedDuration: "3-4 weeks",
-    },
-    {
-      id: "PRJ-005",
-      name: "Wind Farm Installation",
-      developer: "WindTech Solutions",
-      type: "Renewable Energy",
-      location: "Scotland, UK",
-      credits: 35000,
-      priority: "Medium",
-      deadline: "2024-01-22",
-      status: "Completed",
-      submittedDate: "2023-11-30",
-      methodology: "CDM AMS-I.D",
-      estimatedDuration: "2-3 weeks",
-    },
-    {
-      id: "PRJ-006",
-      name: "Agricultural Carbon Sequestration",
-      developer: "FarmGreen Co",
-      type: "Agriculture",
-      location: "Iowa, USA",
-      credits: 12000,
-      priority: "Low",
-      deadline: "2024-01-28",
-      status: "Awaiting",
-      submittedDate: "2024-01-08",
-      methodology: "VCS VM0026",
-      estimatedDuration: "2-3 weeks",
-    },
-  ]
-
-  const filteredProjects = projects.filter((project) => {
+  const filteredUserApplications = userApplications.filter((app) => {
     const matchesSearch =
-      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.developer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.location.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === "all" || project.status.toLowerCase().replace(" ", "-") === statusFilter
-    const matchesPriority = priorityFilter === "all" || project.priority.toLowerCase() === priorityFilter
-
-    return matchesSearch && matchesStatus && matchesPriority
+      app.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      app.organization.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesPriority = priorityFilter === "all" || app.priority === priorityFilter
+    const matchesStatus = statusFilter === "all" || app.status === statusFilter
+    return matchesSearch && matchesPriority && matchesStatus
   })
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Awaiting":
-        return "secondary"
-      case "In Review":
-        return "default"
-      case "Completed":
-        return "outline"
-      default:
-        return "secondary"
-    }
+  const filteredProjectReports = projectReports.filter((report) => {
+    const matchesSearch =
+      report.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.developer.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesPriority = priorityFilter === "all" || report.priority === priorityFilter
+    const matchesStatus = statusFilter === "all" || report.status === statusFilter
+    return matchesSearch && matchesPriority && matchesStatus
+  })
+
+  const handleReviewApplication = (applicationId: string) => {
+    setSelectedApplicationId(applicationId)
+    setIsApprovalModalOpen(true)
   }
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "High":
-        return "destructive"
-      case "Medium":
-        return "default"
-      case "Low":
-        return "secondary"
-      default:
-        return "secondary"
-    }
+  const handleCloseApprovalModal = () => {
+    setIsApprovalModalOpen(false)
+    setSelectedApplicationId(null)
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Link href="/dashboard/verifier" className="flex items-center space-x-2">
-              <Leaf className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold">Carbon Fiesta</span>
-            </Link>
-            <Badge variant="secondary">Verifier</Badge>
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+      {/* Navigation Header */}
+      <nav className="border-b bg-card/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Shield className="h-8 w-8 text-primary" />
+            <span className="text-2xl font-bold text-foreground">VeriBlue</span>
+            <Badge variant="secondary" className="ml-2">
+              Verifier
+            </Badge>
           </div>
-          <Link href="/dashboard/verifier">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
+          <div className="flex items-center space-x-4">
+            <Button variant="outline" size="sm">
+              <Eye className="h-4 w-4 mr-2" />
+              Dashboard
             </Button>
-          </Link>
+            <Avatar>
+              <AvatarImage src="/placeholder.svg" alt="Dr. Elena Rodriguez" />
+              <AvatarFallback>ER</AvatarFallback>
+            </Avatar>
+          </div>
         </div>
-      </header>
+      </nav>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-6 py-8">
+        {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Verification Queue</h1>
-          <p className="text-muted-foreground">Manage and review pending carbon credit projects</p>
-        </div>
-
-        {/* Queue Stats */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card className="border-primary/20 bg-primary/5">
-            <CardHeader className="pb-2">
-              <CardDescription className="flex items-center text-primary">
-                <Clock className="h-4 w-4 mr-2" />
-                Awaiting Review
-              </CardDescription>
-              <CardTitle className="text-2xl text-primary">
-                {projects.filter((p) => p.status === "Awaiting").length}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">Projects pending</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-secondary/20 bg-secondary/5">
-            <CardHeader className="pb-2">
-              <CardDescription className="flex items-center text-secondary">
-                <Eye className="h-4 w-4 mr-2" />
-                In Review
-              </CardDescription>
-              <CardTitle className="text-2xl text-secondary">
-                {projects.filter((p) => p.status === "In Review").length}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">Currently reviewing</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-accent/20 bg-accent/5">
-            <CardHeader className="pb-2">
-              <CardDescription className="flex items-center text-accent-foreground">
-                <FileText className="h-4 w-4 mr-2" />
-                Completed
-              </CardDescription>
-              <CardTitle className="text-2xl text-accent-foreground">
-                {projects.filter((p) => p.status === "Completed").length}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">This month</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-chart-4/20 bg-chart-4/5">
-            <CardHeader className="pb-2">
-              <CardDescription className="flex items-center text-chart-4">
-                <Clock className="h-4 w-4 mr-2" />
-                Avg. Review Time
-              </CardDescription>
-              <CardTitle className="text-2xl text-chart-4">2.8</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">weeks</p>
-            </CardContent>
-          </Card>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Verification Queue</h1>
+          <p className="text-muted-foreground">
+            Review and process user applications and project reports awaiting verification
+          </p>
         </div>
 
         {/* Filters and Search */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Filter Projects</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Filter className="h-5 w-5 text-primary" />
+              Filters & Search
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid md:grid-cols-4 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Search</label>
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search projects..."
+                    placeholder="Search by name, organization, or project..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
                   />
                 </div>
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Status</label>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All statuses" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Statuses</SelectItem>
-                    <SelectItem value="awaiting">Awaiting</SelectItem>
-                    <SelectItem value="in-review">In Review</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Priority</label>
-                <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All priorities" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Priorities</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="low">Low</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Actions</label>
-                <Button variant="outline" className="w-full bg-transparent">
-                  <Filter className="h-4 w-4 mr-2" />
-                  Advanced Filters
-                </Button>
-              </div>
+              <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                <SelectTrigger className="w-full md:w-40">
+                  <SelectValue placeholder="Priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Priorities</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="low">Low</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full md:w-40">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="under_review">Under Review</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
         </Card>
 
-        {/* Projects Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Projects ({filteredProjects.length})</CardTitle>
-            <CardDescription>Click on a project to start verification</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Project</TableHead>
-                  <TableHead>Developer</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Credits</TableHead>
-                  <TableHead>Priority</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Deadline</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredProjects.map((project) => (
-                  <TableRow key={project.id} className="hover:bg-muted/50">
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{project.name}</p>
-                        <p className="text-sm text-muted-foreground">{project.methodology}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <p className="font-medium">{project.developer}</p>
-                      <p className="text-sm text-muted-foreground">Submitted {project.submittedDate}</p>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{project.type}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-1 text-muted-foreground" />
-                        {project.location}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium">{project.credits.toLocaleString()}</TableCell>
-                    <TableCell>
-                      <Badge variant={getPriorityColor(project.priority)}>{project.priority}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={getStatusColor(project.status)}>{project.status}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <Calendar className="h-4 w-4 mr-1 text-muted-foreground" />
-                        {project.deadline}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <Link href="/dashboard/verifier/audit">
-                          <Button size="sm" variant="outline">
-                            <Eye className="h-4 w-4 mr-1" />
-                            Review
+        {/* Tabbed Interface */}
+        <Tabs defaultValue="users" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="users" className="flex items-center gap-2">
+              <UserCheck className="h-4 w-4" />
+              New User Approvals ({filteredUserApplications.length})
+            </TabsTrigger>
+            <TabsTrigger value="reports" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Project Report Verifications ({filteredProjectReports.length})
+            </TabsTrigger>
+          </TabsList>
+
+          {/* User Approvals Tab */}
+          <TabsContent value="users">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <UserCheck className="h-5 w-5 text-secondary" />
+                  User Applications Pending Review
+                </CardTitle>
+                <CardDescription>Review and approve new user registrations for the platform</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User</TableHead>
+                      <TableHead>Organization</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead>Signup Date</TableHead>
+                      <TableHead>Documents</TableHead>
+                      <TableHead>Priority</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredUserApplications.map((application) => (
+                      <TableRow key={application.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-8 w-8">
+                              <AvatarFallback>
+                                {application.userName
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-medium">{application.userName}</p>
+                              <p className="text-xs text-muted-foreground">{application.email}</p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Building2 className="h-4 w-4 text-muted-foreground" />
+                            <span>{application.organization}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={application.role === "developer" ? "default" : "secondary"}>
+                            {application.role === "developer" ? (
+                              <>
+                                <User className="h-3 w-3 mr-1" />
+                                Developer
+                              </>
+                            ) : (
+                              <>
+                                <Building2 className="h-3 w-3 mr-1" />
+                                Buyer
+                              </>
+                            )}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                            {new Date(application.signupDate).toLocaleDateString()}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{application.documentsCount} docs</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              application.priority === "high"
+                                ? "destructive"
+                                : application.priority === "medium"
+                                  ? "secondary"
+                                  : "outline"
+                            }
+                          >
+                            {application.priority}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={application.status === "pending" ? "secondary" : "default"}>
+                            {application.status === "pending" ? (
+                              <>
+                                <Clock className="h-3 w-3 mr-1" />
+                                Pending
+                              </>
+                            ) : (
+                              <>
+                                <Eye className="h-3 w-3 mr-1" />
+                                Under Review
+                              </>
+                            )}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button size="sm" variant="outline" onClick={() => handleReviewApplication(application.id)}>
+                            <Eye className="h-4 w-4 mr-2" />
+                            Review Application
                           </Button>
-                        </Link>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Project Reports Tab */}
+          <TabsContent value="reports">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-primary" />
+                  Project Reports Awaiting Verification
+                </CardTitle>
+                <CardDescription>Audit MRV reports and verify carbon credit claims</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Project</TableHead>
+                      <TableHead>Developer</TableHead>
+                      <TableHead>Report Date</TableHead>
+                      <TableHead>Credits Claimed</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Waiting</TableHead>
+                      <TableHead>Priority</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredProjectReports.map((report) => (
+                      <TableRow key={report.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <FileText className="h-4 w-4 text-primary" />
+                            <span className="font-medium">{report.projectName}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Building2 className="h-4 w-4 text-muted-foreground" />
+                            <span>{report.developer}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                            {new Date(report.reportDate).toLocaleDateString()}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-right">
+                            <div className="font-medium">{report.creditsClaimed.toLocaleString()}</div>
+                            <div className="text-xs text-muted-foreground">credits</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="capitalize">
+                            {report.reportType}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Clock className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm">{report.daysWaiting}d</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              report.priority === "high"
+                                ? "destructive"
+                                : report.priority === "medium"
+                                  ? "secondary"
+                                  : "outline"
+                            }
+                          >
+                            {report.priority === "high" && <AlertTriangle className="h-3 w-3 mr-1" />}
+                            {report.priority}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={report.status === "pending" ? "secondary" : "default"}>
+                            {report.status === "pending" ? (
+                              <>
+                                <Clock className="h-3 w-3 mr-1" />
+                                Pending
+                              </>
+                            ) : (
+                              <>
+                                <Eye className="h-3 w-3 mr-1" />
+                                Under Review
+                              </>
+                            )}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button size="sm" variant="outline">
+                            <Eye className="h-4 w-4 mr-2" />
+                            Begin Audit
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        {/* Queue Statistics */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium">Total Queue Items</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-primary">{userApplications.length + projectReports.length}</div>
+              <p className="text-xs text-muted-foreground">
+                {userApplications.length} users, {projectReports.length} reports
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium">High Priority Items</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-destructive">
+                {[...userApplications, ...projectReports].filter((item) => item.priority === "high").length}
+              </div>
+              <p className="text-xs text-muted-foreground">require immediate attention</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium">Average Wait Time</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-secondary">4.2</div>
+              <p className="text-xs text-muted-foreground">days in queue</p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
+
+      <UserApprovalModal
+        isOpen={isApprovalModalOpen}
+        onClose={handleCloseApprovalModal}
+        applicationId={selectedApplicationId}
+      />
     </div>
   )
 }

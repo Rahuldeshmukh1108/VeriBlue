@@ -3,281 +3,383 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
-import { BreadcrumbNav } from "@/components/navigation/breadcrumb-nav"
-import { DashboardNav } from "@/components/navigation/dashboard-nav"
-import { SkipLink } from "@/components/accessibility/skip-link"
-import { KeyboardNavigation } from "@/components/accessibility/keyboard-navigation"
-import { Clock, Eye, MapPin, Calendar, Search, FileText, TrendingUp, AlertTriangle } from "lucide-react"
-import Link from "next/link"
+import {
+  Shield,
+  Clock,
+  CheckCircle,
+  AlertTriangle,
+  Users,
+  FileText,
+  TrendingUp,
+  Calendar,
+  Eye,
+  UserCheck,
+} from "lucide-react"
+
+// TypeScript interfaces for verifier data structures
+interface VerifierKPIData {
+  itemsInQueue: number
+  verificationsThisMonth: number
+  averageTurnaroundTime: number
+  approvalRate: number
+}
+
+interface PriorityItem {
+  id: string
+  type: "user_approval" | "project_audit"
+  title: string
+  submittedBy: string
+  daysWaiting: number
+  priority: "high" | "medium" | "low"
+}
+
+interface RecentActivity {
+  id: string
+  type: "user_approved" | "user_rejected" | "project_verified" | "project_rejected"
+  title: string
+  date: string
+  credits?: number
+}
+
+interface VerifierProfile {
+  name: string
+  organization: string
+  walletAddress: string
+  avatar?: string
+}
+
+// Mock data for verifier dashboard
+const verifierProfile: VerifierProfile = {
+  name: "Dr. Elena Rodriguez",
+  organization: "Global Carbon Verification Institute",
+  walletAddress: "0x742d35Cc6634C0532925a3b8D4C0532925a3b8D4",
+  avatar: "/placeholder-user.jpg",
+}
+
+const kpiData: VerifierKPIData = {
+  itemsInQueue: 23,
+  verificationsThisMonth: 47,
+  averageTurnaroundTime: 3.2,
+  approvalRate: 94.5,
+}
+
+const priorityQueue: PriorityItem[] = [
+  {
+    id: "1",
+    type: "project_audit",
+    title: "Amazon Rainforest Conservation - Q4 Report",
+    submittedBy: "EcoForest Solutions",
+    daysWaiting: 8,
+    priority: "high",
+  },
+  {
+    id: "2",
+    type: "user_approval",
+    title: "Corporate Buyer Application - TechCorp Inc.",
+    submittedBy: "TechCorp Inc.",
+    daysWaiting: 5,
+    priority: "medium",
+  },
+  {
+    id: "3",
+    type: "project_audit",
+    title: "Mangrove Restoration - MRV Report #12",
+    submittedBy: "Blue Carbon Initiative",
+    daysWaiting: 3,
+    priority: "medium",
+  },
+]
+
+const recentActivity: RecentActivity[] = [
+  {
+    id: "1",
+    type: "project_verified",
+    title: "Kenya Solar Farm - 2,500 credits verified",
+    date: "2024-01-15",
+    credits: 2500,
+  },
+  {
+    id: "2",
+    type: "user_approved",
+    title: "GreenTech Solutions - Corporate Buyer approved",
+    date: "2024-01-14",
+  },
+  {
+    id: "3",
+    type: "project_verified",
+    title: "Indonesian Peatland Restoration - 1,800 credits verified",
+    date: "2024-01-12",
+    credits: 1800,
+  },
+  {
+    id: "4",
+    type: "user_rejected",
+    title: "Incomplete documentation - Developer application rejected",
+    date: "2024-01-10",
+  },
+  {
+    id: "5",
+    type: "project_verified",
+    title: "Brazilian Wind Farm - 3,200 credits verified",
+    date: "2024-01-08",
+    credits: 3200,
+  },
+]
 
 export default function VerifierDashboard() {
-  const verificationQueue = [
-    {
-      id: "RPT-001",
-      name: "Amazon Reforestation Initiative",
-      developer: "EcoTech Solutions",
-      type: "Forestry",
-      location: "Brazil",
-      credits: 50000,
-      priority: "High",
-      deadline: "2024-01-15",
-      status: "pending",
-      progress: 0,
-      reportPeriod: "Q1 2024",
-    },
-    {
-      id: "RPT-002",
-      name: "Solar Farm Development",
-      developer: "GreenEnergy Corp",
-      type: "Renewable Energy",
-      location: "California, USA",
-      credits: 25000,
-      priority: "Medium",
-      deadline: "2024-01-20",
-      status: "in-review",
-      progress: 45,
-      reportPeriod: "Q4 2023",
-    },
-    {
-      id: "RPT-003",
-      name: "Methane Capture Facility",
-      developer: "CleanTech Industries",
-      type: "Waste Management",
-      location: "Texas, USA",
-      credits: 15000,
-      priority: "Low",
-      deadline: "2024-01-25",
-      status: "pending",
-      progress: 0,
-      reportPeriod: "Q1 2024",
-    },
-  ]
-
-  const recentVerifications = [
-    {
-      project: "Wind Farm Project Alpha",
-      credits: 30000,
-      status: "approved",
-      date: "2024-01-10",
-    },
-    {
-      project: "Ocean Cleanup Initiative",
-      credits: 20000,
-      status: "rejected",
-      date: "2024-01-08",
-    },
-    {
-      project: "Urban Tree Planting",
-      credits: 5000,
-      status: "approved",
-      date: "2024-01-05",
-    },
-  ]
-
   return (
-    <div className="min-h-screen bg-background">
-      <SkipLink />
-      <KeyboardNavigation />
-      <DashboardNav userType="verifier" />
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+      {/* Navigation Header */}
+      <nav className="border-b bg-card/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Shield className="h-8 w-8 text-primary" />
+            <span className="text-2xl font-bold text-foreground">VeriBlue</span>
+            <Badge variant="secondary" className="ml-2">
+              Verifier
+            </Badge>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Button variant="outline" size="sm">
+              <Eye className="h-4 w-4 mr-2" />
+              Verification Queue
+            </Button>
+            <Avatar>
+              <AvatarImage src={verifierProfile.avatar || "/placeholder.svg"} alt={verifierProfile.name} />
+              <AvatarFallback>
+                {verifierProfile.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
+              </AvatarFallback>
+            </Avatar>
+          </div>
+        </div>
+      </nav>
 
-      <main id="main-content" tabIndex={-1} className="container mx-auto px-4 py-8">
-        <BreadcrumbNav />
-
+      <div className="container mx-auto px-6 py-8">
+        {/* Welcome Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Verifier Dashboard</h1>
-          <p className="text-muted-foreground">Review and verify carbon credit projects and MRV reports</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, {verifierProfile.name}</h1>
+          <p className="text-muted-foreground">
+            Maintain platform integrity through rigorous verification at {verifierProfile.organization}
+          </p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="border-primary/20 bg-primary/5">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-primary">Pending Reviews</CardTitle>
+        {/* KPI Widgets - 4 Column Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="border-destructive/20 bg-destructive/5">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Items in Queue</CardTitle>
+              <AlertTriangle className="h-4 w-4 text-destructive" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">12</div>
-              <p className="text-xs text-muted-foreground mt-1">+3 from last week</p>
+              <div className="text-2xl font-bold text-destructive">{kpiData.itemsInQueue}</div>
+              <p className="text-xs text-muted-foreground">awaiting review</p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-primary/20 bg-primary/5">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Verifications This Month</CardTitle>
+              <CheckCircle className="h-4 w-4 text-primary" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-primary">{kpiData.verificationsThisMonth}</div>
+              <p className="text-xs text-muted-foreground">+8% from last month</p>
             </CardContent>
           </Card>
 
           <Card className="border-secondary/20 bg-secondary/5">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-secondary">Verified Credits</CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Average Turnaround</CardTitle>
+              <Clock className="h-4 w-4 text-secondary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-secondary">2.4M</div>
-              <p className="text-xs text-muted-foreground mt-1">Total verified</p>
+              <div className="text-2xl font-bold text-secondary">{kpiData.averageTurnaroundTime}</div>
+              <p className="text-xs text-muted-foreground">days per verification</p>
             </CardContent>
           </Card>
 
           <Card className="border-accent/20 bg-accent/5">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-accent-foreground">Success Rate</CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Approval Rate</CardTitle>
+              <TrendingUp className="h-4 w-4 text-accent-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-accent-foreground">94.2%</div>
-              <p className="text-xs text-muted-foreground mt-1">Approval rate</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-chart-4/20 bg-chart-4/5">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-chart-4">Reputation Score</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-chart-4">4.9</div>
-              <p className="text-xs text-muted-foreground mt-1">Out of 5.0</p>
+              <div className="text-2xl font-bold text-accent-foreground">{kpiData.approvalRate}%</div>
+              <p className="text-xs text-muted-foreground">last 30 days</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Verification Queue */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <Clock className="w-5 h-5 text-primary" />
-                      MRV Report Queue
-                    </CardTitle>
-                    <CardDescription>Reports awaiting your verification</CardDescription>
-                  </div>
-                  <Link href="/dashboard/verifier/queue">
-                    <Button variant="outline" size="sm">
-                      <Search className="h-4 w-4 mr-2" />
-                      View All
-                    </Button>
-                  </Link>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {verificationQueue.map((report) => (
-                  <div key={report.id} className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
-                    <div className="flex justify-between items-start mb-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Priority Queue Snapshot */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
+                Priority Queue
+              </CardTitle>
+              <CardDescription>Oldest and highest-priority items awaiting review</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {priorityQueue.map((item) => (
+                  <div key={item.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center gap-3">
+                      {item.type === "user_approval" ? (
+                        <UserCheck className="h-4 w-4 text-secondary" />
+                      ) : (
+                        <FileText className="h-4 w-4 text-primary" />
+                      )}
                       <div>
-                        <h3 className="font-semibold">{report.name}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {report.reportPeriod} Report by {report.developer}
-                        </p>
+                        <p className="font-medium text-sm">{item.title}</p>
+                        <p className="text-xs text-muted-foreground">by {item.submittedBy}</p>
                       </div>
+                    </div>
+                    <div className="flex items-center gap-2">
                       <Badge
                         variant={
-                          report.priority === "High"
+                          item.priority === "high"
                             ? "destructive"
-                            : report.priority === "Medium"
-                              ? "default"
-                              : "secondary"
+                            : item.priority === "medium"
+                              ? "secondary"
+                              : "outline"
                         }
                       >
-                        {report.priority}
+                        {item.priority}
                       </Badge>
+                      <span className="text-xs text-muted-foreground">{item.daysWaiting}d</span>
                     </div>
+                  </div>
+                ))}
+              </div>
+              <Button className="w-full mt-4 bg-transparent" variant="outline">
+                <Eye className="h-4 w-4 mr-2" />
+                View Full Queue
+              </Button>
+            </CardContent>
+          </Card>
 
-                    <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground mb-3">
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" />
-                        {report.location}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        Due {report.deadline}
-                      </div>
+          {/* Recent Activity */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-primary" />
+                Recent Activity
+              </CardTitle>
+              <CardDescription>Your latest verification actions</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {recentActivity.map((activity) => (
+                  <div key={activity.id} className="flex items-center gap-3 p-2">
+                    <div className="flex-shrink-0">
+                      {activity.type === "project_verified" && <CheckCircle className="h-4 w-4 text-primary" />}
+                      {activity.type === "user_approved" && <UserCheck className="h-4 w-4 text-secondary" />}
+                      {(activity.type === "project_rejected" || activity.type === "user_rejected") && (
+                        <AlertTriangle className="h-4 w-4 text-destructive" />
+                      )}
                     </div>
-
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <span className="text-sm font-medium">{report.credits.toLocaleString()} credits</span>
-                        <Badge variant="outline" className="ml-2">
-                          {report.type}
-                        </Badge>
-                      </div>
-                      <Link href={`/dashboard/verifier/review/${report.id}`}>
-                        <Button size="sm" className="bg-primary hover:bg-primary/90">
-                          <Eye className="h-4 w-4 mr-2" />
-                          Review Report
-                        </Button>
-                      </Link>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{activity.title}</p>
+                      <p className="text-xs text-muted-foreground">{new Date(activity.date).toLocaleDateString()}</p>
                     </div>
-
-                    {report.progress > 0 && (
-                      <div className="mt-3">
-                        <div className="flex justify-between text-sm mb-1">
-                          <span>Review Progress</span>
-                          <span>{report.progress}%</span>
-                        </div>
-                        <Progress value={report.progress} className="h-2" />
-                      </div>
+                    {activity.credits && (
+                      <Badge variant="outline" className="text-xs">
+                        {activity.credits.toLocaleString()} credits
+                      </Badge>
                     )}
                   </div>
                 ))}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Link href="/dashboard/verifier/queue">
-                  <Button className="w-full justify-start bg-transparent" variant="outline">
-                    <Clock className="w-4 h-4 mr-2" />
-                    View Queue
-                  </Button>
-                </Link>
-                <Link href="/dashboard/verifier/review/RPT-001">
-                  <Button className="w-full justify-start bg-transparent" variant="outline">
-                    <FileText className="w-4 h-4 mr-2" />
-                    Start Review
-                  </Button>
-                </Link>
-                <Link href="/dashboard/verifier/analytics">
-                  <Button className="w-full justify-start bg-transparent" variant="outline">
-                    <TrendingUp className="w-4 h-4 mr-2" />
-                    View Analytics
-                  </Button>
-                </Link>
-                <Link href="/dashboard/verifier/alerts">
-                  <Button className="w-full justify-start bg-transparent" variant="outline">
-                    <AlertTriangle className="w-4 w-4 mr-2" />
-                    View Alerts
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            {/* Recent Activity */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Recent Verifications</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {recentVerifications.map((verification, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                    <div>
-                      <p className="font-medium text-sm">{verification.project}</p>
-                      <p className="text-xs text-muted-foreground">{verification.credits.toLocaleString()} credits</p>
-                    </div>
-                    <div className="text-right">
-                      <Badge variant={verification.status === "approved" ? "default" : "destructive"} className="mb-1">
-                        {verification.status}
-                      </Badge>
-                      <p className="text-xs text-muted-foreground">{verification.date}</p>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </main>
+
+        {/* Verification Performance */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-secondary" />
+              Verification Performance
+            </CardTitle>
+            <CardDescription>Your verification metrics and efficiency</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Monthly Target Progress</span>
+                  <span>78%</span>
+                </div>
+                <Progress value={78} className="h-2" />
+                <p className="text-xs text-muted-foreground">11 verifications remaining this month</p>
+              </div>
+
+              <div className="text-center p-4 bg-muted/50 rounded-lg">
+                <div className="text-2xl font-bold text-primary">156</div>
+                <div className="text-xs text-muted-foreground">Total verifications completed</div>
+              </div>
+
+              <div className="text-center p-4 bg-muted/50 rounded-lg">
+                <div className="text-2xl font-bold text-secondary">2.8M</div>
+                <div className="text-xs text-muted-foreground">Credits verified (lifetime)</div>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <h4 className="font-medium">Recent Achievements</h4>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <Badge variant="secondary" className="w-2 h-2 p-0 rounded-full" />
+                  <span>Maintained 95%+ approval rate for 6 months</span>
+                  <span className="text-muted-foreground ml-auto">Jan 2024</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Badge variant="secondary" className="w-2 h-2 p-0 rounded-full" />
+                  <span>Verified 100+ projects milestone</span>
+                  <span className="text-muted-foreground ml-auto">Dec 2024</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-primary" />
+              Quick Actions
+            </CardTitle>
+            <CardDescription>Navigate to your most common verification tasks</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Button className="h-20 flex-col gap-2 bg-transparent" variant="outline">
+                <Users className="h-6 w-6" />
+                <span>Review User Applications</span>
+              </Button>
+              <Button className="h-20 flex-col gap-2 bg-transparent" variant="outline">
+                <FileText className="h-6 w-6" />
+                <span>Audit Project Reports</span>
+              </Button>
+              <Button className="h-20 flex-col gap-2 bg-transparent" variant="outline">
+                <Eye className="h-6 w-6" />
+                <span>View Public Profile</span>
+              </Button>
+              <Button className="h-20 flex-col gap-2 bg-transparent" variant="outline">
+                <TrendingUp className="h-6 w-6" />
+                <span>Performance Analytics</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
