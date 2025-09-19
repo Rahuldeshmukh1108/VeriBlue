@@ -12,7 +12,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Leaf className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold text-foreground">Carbon Fiesta</span>
+            <span className="text-2xl font-bold text-foreground">VeriBlue</span>
           </div>
           <div className="flex items-center space-x-4">
             <Link href="/login">
@@ -240,9 +240,9 @@ export default function HomePage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Leaf className="h-6 w-6 text-primary" />
-              <span className="text-lg font-semibold">Carbon Fiesta</span>
+              <span className="text-lg font-semibold">VeriBlue</span>
             </div>
-            <p className="text-muted-foreground">© 2024 Carbon Fiesta. Building a sustainable future.</p>
+            <p className="text-muted-foreground">© 2024 VeriBlue. Building a sustainable future.</p>
           </div>
         </div>
       </footer>

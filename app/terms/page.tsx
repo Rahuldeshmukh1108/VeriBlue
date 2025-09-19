@@ -12,7 +12,7 @@ export default function TermsPage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Leaf className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold text-foreground">Carbon Fiesta</span>
+            <span className="text-2xl font-bold text-foreground">VeriBlue</span>
           </div>
           <div className="flex items-center space-x-4">
             <Link href="/">
@@ -40,7 +40,7 @@ export default function TermsPage() {
             <span className="text-primary block">Service</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto text-pretty">
-            Please read these terms carefully before using Carbon Fiesta. By accessing our platform, you agree to be
+            Please read these terms carefully before using VeriBlue. By accessing our platform, you agree to be
             bound by these terms.
           </p>
           <p className="text-sm text-muted-foreground">Last updated: December 15, 2024</p>
@@ -60,13 +60,13 @@ export default function TermsPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-muted-foreground">
-                  By accessing and using Carbon Fiesta ("the Platform"), you accept and agree to be bound by the terms
+                  By accessing and using VeriBlue ("the Platform"), you accept and agree to be bound by the terms
                   and provision of this agreement. If you do not agree to abide by the above, please do not use this
                   service.
                 </p>
                 <p className="text-muted-foreground">
                   These Terms of Service ("Terms") govern your use of our carbon credit marketplace platform operated by
-                  Carbon Fiesta Inc. ("we," "us," or "our").
+                  VeriBlue Inc. ("we," "us," or "our").
                 </p>
               </CardContent>
             </Card>
@@ -129,7 +129,7 @@ export default function TermsPage() {
                 <div>
                   <h4 className="font-semibold mb-2">Carbon Credit Marketplace</h4>
                   <p className="text-muted-foreground mb-4">
-                    Carbon Fiesta provides a platform for the transparent trading of verified carbon credits. We
+                    VeriBlue provides a platform for the transparent trading of verified carbon credits. We
                     facilitate connections between project developers, verifiers, and buyers but do not directly issue
                     or guarantee carbon credits.
                   </p>
@@ -237,7 +237,7 @@ export default function TermsPage() {
                 <div>
                   <h4 className="font-semibold mb-2">Platform Fees</h4>
                   <p className="text-muted-foreground mb-4">
-                    Carbon Fiesta charges fees for various services, including:
+                    VeriBlue charges fees for various services, including:
                   </p>
                   <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
                     <li>Transaction fees for carbon credit trades</li>
@@ -262,8 +262,8 @@ export default function TermsPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-muted-foreground">
-                  The Carbon Fiesta platform, including all software, content, trademarks, and intellectual property, is
-                  owned by Carbon Fiesta Inc. or our licensors. Users retain ownership of their submitted content but
+                  The VeriBlue platform, including all software, content, trademarks, and intellectual property, is
+                  owned by VeriBlue Inc. or our licensors. Users retain ownership of their submitted content but
                   grant us necessary licenses to operate the platform.
                 </p>
                 <p className="text-muted-foreground">
@@ -320,9 +320,9 @@ export default function TermsPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Leaf className="h-6 w-6 text-primary" />
-              <span className="text-lg font-semibold">Carbon Fiesta</span>
+              <span className="text-lg font-semibold">VeriBlue</span>
             </div>
-            <p className="text-muted-foreground">© 2024 Carbon Fiesta. Building a sustainable future.</p>
+            <p className="text-muted-foreground">© 2024 VeriBlue. Building a sustainable future.</p>
           </div>
         </div>
       </footer>

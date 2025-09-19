@@ -16,25 +16,28 @@ import { useBlockchain } from "@/hooks/use-blockchain"
 import { useCarbonCredits } from "@/hooks/use-carbon-credits"
 import { useIPFS } from "@/hooks/use-ipfs"
 import {
-  Wallet,
   Plus,
   TrendingUp,
   FileText,
   MapPin,
   Calendar,
   DollarSign,
-  ArrowRight,
   Bell,
   CreditCard,
-  Coins,
   Upload,
-  LinkIcon,
+  Leaf,
+  Target,
+  FolderOpen,
+  User,
+  BarChart3,
+  Eye,
+  Edit,
 } from "lucide-react"
 import Link from "next/link"
 
 export default function DeveloperDashboard() {
   const [isLoading, setIsLoading] = useState(true)
-  const [projects, setProjects] = useState([])
+  const [projects, setProjects] = useState<any[]>([])
   const { success, error } = useToast()
 
   const { isConnected, address, carbonBalance } = useBlockchain()
@@ -47,43 +50,51 @@ export default function DeveloperDashboard() {
         // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 1500))
 
-        // Mock data - in real app this would come from API
         const mockProjects = [
           {
             id: 1,
-            name: "Amazon Reforestation Initiative",
+            name: "Sundarbans Mangrove Restoration",
             status: "Verified",
-            location: "Brazil",
+            location: "West Bengal, India",
             startDate: "Jan 2024",
-            progress: 75,
+            progress: 85,
             credits: 5200,
+            carbonAbsorbed: 12500, // tons of CO2
+            image: "/wind-farm-renewable-energy.jpg",
             onChain: true,
             contractAddress: "0x1234...5678",
             metadataUri: "ipfs://QmXXX...XXX",
+            lastUpdated: "2025-01-15",
           },
           {
             id: 2,
-            name: "Solar Farm Development",
-            status: "In Review",
-            location: "Kenya",
+            name: "Madagascar Coastal Protection",
+            status: "Verified",
+            location: "Toliara, Madagascar",
             startDate: "Mar 2024",
-            progress: 45,
+            progress: 92,
             credits: 0,
+            carbonAbsorbed: 15200,
+            image: "/mangrove-restoration-blue-carbon.jpg",
             onChain: false,
             contractAddress: null,
             metadataUri: null,
+            lastUpdated: "2025-01-10",
           },
           {
             id: 3,
-            name: "Mangrove Restoration",
-            status: "Planning",
-            location: "Philippines",
+            name: "Seychelles Blue Carbon Initiative",
+            status: "Pending Verification",
+            location: "Mahé, Seychelles",
             startDate: "May 2024",
-            progress: 15,
+            progress: 65,
             credits: 0,
+            carbonAbsorbed: 8900,
+            image: "/biogas-plant-waste-management.jpg",
             onChain: false,
             contractAddress: null,
             metadataUri: null,
+            lastUpdated: "2025-01-12",
           },
         ]
 
@@ -101,20 +112,11 @@ export default function DeveloperDashboard() {
     loadData()
   }, [success, error])
 
-  const handleMintCredits = async (projectId: string, amount: string) => {
-    if (!isConnected) {
-      error("Wallet not connected", "Please connect your wallet to mint credits.")
+  const handleUploadMetadata = async (projectData: any) => {
+    if (!projectData) {
+      error("No project selected", "Please select a project to upload.")
       return
     }
-
-    try {
-      await mintCredits(amount, projectId)
-    } catch (err) {
-      error("Minting failed", "Failed to mint carbon credits.")
-    }
-  }
-
-  const handleUploadMetadata = async (projectData: any) => {
     try {
       const metadataUri = await uploadToIPFS({
         name: projectData.name,
@@ -133,7 +135,7 @@ export default function DeveloperDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
         <SkipLink />
         <KeyboardNavigation />
         <DashboardNav userType="developer" />
@@ -146,7 +148,7 @@ export default function DeveloperDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
       <SkipLink />
       <KeyboardNavigation />
       <DashboardNav userType="developer" />
@@ -155,100 +157,206 @@ export default function DeveloperDashboard() {
         <BreadcrumbNav />
 
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Developer Dashboard</h1>
-          <p className="text-muted-foreground">Manage your carbon credit projects and track your impact</p>
-          {!isConnected && (
-            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-yellow-800">Connect your wallet to access blockchain features and mint credits.</p>
-            </div>
-          )}
+          <h1 className="text-5xl font-bold mb-2 text-white">Developer Dashboard</h1>
+          <p className="text-slate-300 text-lg">
+            Manage your carbon credit projects and track your environmental impact
+          </p>
         </div>
 
-        {/* Wallet Summary */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card>
+          <Card className="bg-slate-800/80 backdrop-blur-sm border-slate-700 hover:shadow-lg transition-shadow">
             <CardHeader className="pb-2">
-              <CardDescription className="flex items-center">
-                <Wallet className="h-4 w-4 mr-2" />
+              <CardDescription className="flex items-center text-blue-400">
+                <BarChart3 className="w-6 h-6 text-blue-400 mr-2" />
                 {isConnected ? "On-Chain Credits" : "Total Credits"}
               </CardDescription>
-              <CardTitle className="text-2xl text-primary">{isConnected ? carbonBalance : "12,450"}</CardTitle>
+              <CardTitle className="text-2xl text-white">{isConnected ? carbonBalance : "12,450"}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
-                {isConnected ? "Verified on blockchain" : "+2,340 this month"}
-              </p>
+              <p className="text-sm text-slate-400">{isConnected ? "Verified on blockchain" : "+2,340 this month"}</p>
             </CardContent>
           </Card>
-          <Card>
+
+          <Card className="bg-slate-800/80 backdrop-blur-sm border-slate-700 hover:shadow-lg transition-shadow">
             <CardHeader className="pb-2">
-              <CardDescription className="flex items-center">
-                <DollarSign className="h-4 w-4 mr-2" />
+              <CardDescription className="flex items-center text-emerald-400">
+                <DollarSign className="w-6 h-6 text-emerald-400 mr-2" />
                 Revenue
               </CardDescription>
-              <CardTitle className="text-2xl text-secondary">$89,250</CardTitle>
+              <CardTitle className="text-2xl text-white">$89,250</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">+$15,680 this month</p>
+              <p className="text-sm text-slate-400">+$15,680 this month</p>
             </CardContent>
           </Card>
-          <Card>
+
+          <Card className="bg-slate-800/80 backdrop-blur-sm border-slate-700 hover:shadow-lg transition-shadow">
             <CardHeader className="pb-2">
-              <CardDescription className="flex items-center">
-                <FileText className="h-4 w-4 mr-2" />
-                Active Projects
+              <CardDescription className="flex items-center text-amber-400">
+                <FolderOpen className="w-6 h-6 text-amber-400 mr-2" />
+                My Projects
               </CardDescription>
-              <CardTitle className="text-2xl text-accent-foreground">{projects.length}</CardTitle>
+              <CardTitle className="text-2xl text-white">{projects.length}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">3 pending verification</p>
+              <p className="text-sm text-slate-400">1 pending verification</p>
             </CardContent>
           </Card>
-          <Card>
+
+          <Card className="bg-slate-800/80 backdrop-blur-sm border-slate-700 hover:shadow-lg transition-shadow">
             <CardHeader className="pb-2">
-              <CardDescription className="flex items-center">
-                <TrendingUp className="h-4 w-4 mr-2" />
+              <CardDescription className="flex items-center text-purple-400">
+                <Target className="w-6 h-6 text-purple-400 mr-2" />
                 Impact Score
               </CardDescription>
-              <CardTitle className="text-2xl text-chart-4">94.2</CardTitle>
+              <CardTitle className="text-2xl text-white">94.2</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">Excellent rating</p>
+              <p className="text-sm text-slate-400">Excellent rating</p>
             </CardContent>
           </Card>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-              <CardDescription>Common tasks and shortcuts</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
+        <Card className="mb-8 bg-slate-800/80 backdrop-blur-sm border-slate-700">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2 text-white">
+                  <Leaf className="h-5 w-5 text-emerald-400" />
+                  My Project Portfolio
+                </CardTitle>
+                <CardDescription className="text-slate-300">
+                  Your active carbon credit projects with impact data
+                </CardDescription>
+              </div>
+              <Link href="/dashboard/developer/projects">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="bg-transparent border-slate-600 text-slate-300 hover:bg-slate-700"
+                >
+                  View All Projects
+                </Button>
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {projects.length === 0 ? (
+              <EmptyProjects userType="developer" />
+            ) : (
+              <div className="grid md:grid-cols-3 gap-6">
+                {projects.map((project) => (
+                  <div
+                    key={project.id}
+                    className="bg-slate-700/50 rounded-lg overflow-hidden border border-slate-600 hover:shadow-lg transition-all duration-300"
+                  >
+                    {/* Project Image */}
+                    <div className="relative h-48">
+                      <img
+                        src={project.image || "/placeholder.svg"}
+                        alt={`${project.name} project`}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-3 right-3">
+                        <Badge
+                          className={
+                            project.status === "Verified"
+                              ? "bg-emerald-500 text-white"
+                              : project.status === "Pending Verification"
+                                ? "bg-amber-500 text-white"
+                                : "bg-slate-500 text-white"
+                          }
+                        >
+                          {project.status}
+                        </Badge>
+                      </div>
+                    </div>
+
+                    {/* Project Content */}
+                    <div className="p-4 space-y-4">
+                      <div>
+                        <h3 className="font-semibold text-lg text-white mb-2">{project.name}</h3>
+                        <div className="flex items-center text-sm text-slate-400 mb-3">
+                          <MapPin className="h-4 w-4 mr-1" />
+                          {project.location}
+                        </div>
+                      </div>
+
+                      {/* Progress */}
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm text-slate-300">
+                          <span>Progress</span>
+                          <span>{project.progress}%</span>
+                        </div>
+                        <Progress value={project.progress} className="h-2 bg-slate-600" />
+                      </div>
+
+                      {/* Carbon Data */}
+                      <div className="flex items-center gap-2 text-emerald-400">
+                        <TrendingUp className="h-4 w-4" />
+                        <span className="font-semibold">{project.carbonAbsorbed?.toLocaleString?.() ?? "—"} tons CO₂</span>
+                      </div>
+
+                      {/* Last Updated */}
+                      <div className="flex items-center text-sm text-slate-400">
+                        <Calendar className="h-4 w-4 mr-1" />
+                        Updated {project.lastUpdated}
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2 pt-2">
+                        <Link href={`/dashboard/developer/projects/${project.id}`} className="flex-1">
+                          <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                            <Eye className="h-4 w-4 mr-2" />
+                            View Details
+                          </Button>
+                        </Link>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="mb-8 bg-slate-800/80 backdrop-blur-sm border-slate-700">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-white">
+              <Target className="h-5 w-5 text-blue-400" />
+              Quick Actions
+            </CardTitle>
+            <CardDescription className="text-slate-300">Essential project management tools</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-3 gap-4">
               <Link href="/dashboard/developer/new-project">
-                <Button className="w-full justify-start bg-transparent" variant="outline">
+                <Button
+                  className="w-full justify-start bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-300"
+                  variant="outline"
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   Create New Project
                 </Button>
               </Link>
               <Link href="/dashboard/developer/projects/1/mrv">
-                <Button className="w-full justify-start bg-transparent" variant="outline">
+                <Button
+                  className="w-full justify-start bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 text-emerald-300"
+                  variant="outline"
+                >
                   <FileText className="h-4 w-4 mr-2" />
                   Access MRV System
                 </Button>
               </Link>
               <Button
-                className="w-full justify-start bg-transparent"
-                variant="outline"
-                onClick={() => handleMintCredits("proj_001", "100")}
-                disabled={!isConnected || isMinting}
-              >
-                <Coins className="h-4 w-4 mr-2" />
-                {isMinting ? "Minting..." : "Mint Credits"}
-              </Button>
-              <Button
-                className="w-full justify-start bg-transparent"
+                className="w-full justify-start bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/30 text-amber-300"
                 variant="outline"
                 onClick={() => handleUploadMetadata(projects[0])}
                 disabled={isUploading}
@@ -257,143 +365,85 @@ export default function DeveloperDashboard() {
                 {isUploading ? "Uploading..." : "Upload to IPFS"}
               </Button>
               <Link href="/dashboard/developer/wallet">
-                <Button className="w-full justify-start bg-transparent" variant="outline">
+                <Button
+                  className="w-full justify-start bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300"
+                  variant="outline"
+                >
                   <CreditCard className="h-4 w-4 mr-2" />
                   View Wallet
                 </Button>
               </Link>
               <Link href="/dashboard/developer/notifications">
-                <Button className="w-full justify-start bg-transparent" variant="outline">
+                <Button
+                  className="w-full justify-start bg-teal-600/20 hover:bg-teal-600/30 border border-teal-500/30 text-teal-300"
+                  variant="outline"
+                >
                   <Bell className="h-4 w-4 mr-2" />
                   View Notifications
                 </Button>
               </Link>
-            </CardContent>
-          </Card>
+              <Link href="/dashboard/developer/profile">
+                <Button
+                  className="w-full justify-start bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300"
+                  variant="outline"
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Profile Settings
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* Project Overview */}
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Project Portfolio</CardTitle>
-                  <CardDescription>Your active carbon credit projects</CardDescription>
-                </div>
-                <Link href="/dashboard/developer/projects">
-                  <Button variant="outline" size="sm">
-                    View All Projects
-                  </Button>
-                </Link>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {projects.length === 0 ? (
-                <EmptyProjects userType="developer" />
-              ) : (
-                <div className="space-y-4">
-                  {projects.map((project) => (
-                    <div key={project.id} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-semibold">{project.name}</h3>
-                        <div className="flex items-center gap-2">
-                          {project.onChain && (
-                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                              <LinkIcon className="h-3 w-3 mr-1" />
-                              On-Chain
-                            </Badge>
-                          )}
-                          <Badge
-                            className={
-                              project.status === "Verified"
-                                ? "bg-primary/10 text-primary"
-                                : project.status === "In Review"
-                                  ? "bg-secondary/10 text-secondary"
-                                  : "bg-muted text-muted-foreground"
-                            }
-                          >
-                            {project.status}
-                          </Badge>
-                        </div>
-                      </div>
-                      <div className="flex items-center text-sm text-muted-foreground mb-3">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        {project.location} •
-                        <Calendar className="h-4 w-4 ml-2 mr-1" />
-                        Started {project.startDate}
-                        {project.onChain && (
-                          <>
-                            • <span className="font-mono text-xs">{project.contractAddress}</span>
-                          </>
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>Progress</span>
-                          <span>{project.progress}%</span>
-                        </div>
-                        <Progress value={project.progress} className="h-2" />
-                      </div>
-                      <div className="flex justify-between items-center mt-3">
-                        <span className="text-sm text-muted-foreground">
-                          {project.credits > 0
-                            ? `${project.credits.toLocaleString()} credits generated`
-                            : "Pending verification"}
-                        </span>
-                        <Link href={`/dashboard/developer/projects/${project.id}`}>
-                          <Button size="sm" variant="ghost">
-                            View Details <ArrowRight className="h-3 w-3 ml-1" />
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Recent Activity */}
-        <Card className="mt-8">
+        <Card className="bg-slate-800/80 backdrop-blur-sm border-slate-700">
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest updates on your projects and credits</CardDescription>
+            <CardTitle className="flex items-center gap-2 text-white">
+              <TrendingUp className="h-5 w-5 text-blue-400" />
+              Recent Activity
+            </CardTitle>
+            <CardDescription className="text-slate-300">
+              Latest updates on your projects and environmental impact
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center space-x-4 p-3 border rounded-lg">
-                <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
+              <div className="flex items-center space-x-4 p-4 border border-slate-600 rounded-lg bg-gradient-to-r from-blue-900/30 to-slate-800/30">
+                <div className="h-3 w-3 bg-blue-500 rounded-full"></div>
                 <div className="flex-1">
-                  <p className="font-medium">Credits minted on blockchain</p>
-                  <p className="text-sm text-muted-foreground">
-                    2,340 credits minted for Amazon Reforestation Initiative
+                  <p className="font-medium text-white">Project verification completed</p>
+                  <p className="text-sm text-slate-400">
+                    Sundarbans Mangrove Restoration verified - 12,500 tons CO₂ absorption confirmed
                   </p>
                 </div>
-                <span className="text-sm text-muted-foreground">1 hour ago</span>
+                <span className="text-sm text-slate-500">1 hour ago</span>
               </div>
-              <div className="flex items-center space-x-4 p-3 border rounded-lg">
-                <div className="h-2 w-2 bg-primary rounded-full"></div>
+              <div className="flex items-center space-x-4 p-4 border border-slate-600 rounded-lg bg-gradient-to-r from-emerald-900/30 to-slate-800/30">
+                <div className="h-3 w-3 bg-emerald-500 rounded-full"></div>
                 <div className="flex-1">
-                  <p className="font-medium">Amazon Reforestation Initiative verified</p>
-                  <p className="text-sm text-muted-foreground">Project approved by verifier and ready for minting</p>
+                  <p className="font-medium text-white">Environmental impact updated</p>
+                  <p className="text-sm text-slate-400">
+                    Madagascar Coastal Protection - 15,200 tons CO₂ reduction confirmed
+                  </p>
                 </div>
-                <span className="text-sm text-muted-foreground">2 hours ago</span>
+                <span className="text-sm text-slate-500">2 hours ago</span>
               </div>
-              <div className="flex items-center space-x-4 p-3 border rounded-lg">
-                <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+              <div className="flex items-center space-x-4 p-4 border border-slate-600 rounded-lg bg-gradient-to-r from-amber-900/30 to-slate-800/30">
+                <div className="h-3 w-3 bg-amber-500 rounded-full"></div>
                 <div className="flex-1">
-                  <p className="font-medium">Metadata uploaded to IPFS</p>
-                  <p className="text-sm text-muted-foreground">Project metadata stored on decentralized network</p>
+                  <p className="font-medium text-white">Metadata uploaded to IPFS</p>
+                  <p className="text-sm text-slate-400">Project metadata stored on decentralized network</p>
                 </div>
-                <span className="text-sm text-muted-foreground">1 day ago</span>
+                <span className="text-sm text-slate-500">1 day ago</span>
               </div>
-              <div className="flex items-center space-x-4 p-3 border rounded-lg">
-                <div className="h-2 w-2 bg-secondary rounded-full"></div>
+              <div className="flex items-center space-x-4 p-4 border border-slate-600 rounded-lg bg-gradient-to-r from-purple-900/30 to-slate-800/30">
+                <div className="h-3 w-3 bg-purple-500 rounded-full"></div>
                 <div className="flex-1">
-                  <p className="font-medium">MRV report submitted</p>
-                  <p className="text-sm text-muted-foreground">Solar Farm Development - Q1 2024 report</p>
+                  <p className="font-medium text-white">MRV report submitted</p>
+                  <p className="text-sm text-slate-400">
+                    Seychelles Blue Carbon Initiative - Q1 2024 impact assessment
+                  </p>
                 </div>
-                <span className="text-sm text-muted-foreground">2 days ago</span>
+                <span className="text-sm text-slate-500">2 days ago</span>
               </div>
             </div>
           </CardContent>

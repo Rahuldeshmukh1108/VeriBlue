@@ -65,7 +65,7 @@ export function MobileNav({ userType }: MobileNavProps) {
         <SheetHeader>
           <SheetTitle className="flex items-center space-x-2 text-left">
             <Leaf className="h-6 w-6 text-primary" />
-            <span>Carbon Fiesta</span>
+            <span>VeriBlue</span>
             {userType && (
               <Badge variant="secondary" className="ml-2">
                 {userType.charAt(0).toUpperCase() + userType.slice(1)}

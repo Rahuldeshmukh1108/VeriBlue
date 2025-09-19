@@ -97,7 +97,7 @@ export default function NewProjectPage() {
           <div className="flex items-center space-x-4">
             <Link href="/dashboard/developer" className="flex items-center space-x-2">
               <Leaf className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold">Carbon Fiesta</span>
+              <span className="text-xl font-bold">VeriBlue</span>
             </Link>
             <Badge variant="secondary">Developer</Badge>
           </div>
@@ -426,7 +426,7 @@ export default function NewProjectPage() {
                         onCheckedChange={(checked) => setFormData({ ...formData, termsAccepted: checked as boolean })}
                       />
                       <Label htmlFor="terms" className="text-sm leading-relaxed">
-                        I agree to the Carbon Fiesta Terms of Service and Privacy Policy. I understand that my project
+                        I agree to the VeriBlue Terms of Service and Privacy Policy. I understand that my project
                         will undergo third-party verification.
                       </Label>
                     </div>

@@ -192,9 +192,16 @@ export default function VerificationQueue() {
             </Badge>
           </div>
           <div className="flex items-center space-x-4">
-            <Button variant="outline" size="sm">
-              <Eye className="h-4 w-4 mr-2" />
-              Dashboard
+            <Link href="/dashboard/verifier" className="flex items-center space-x-2">
+              <Leaf className="h-6 w-6 text-primary" />
+              <span className="text-xl font-bold">Carbon Fiesta</span>
+            </Link>
+            <Badge variant="secondary">Verifier</Badge>
+          </div>
+          <Link href="/dashboard/verifier">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Dashboard
             </Button>
             <Avatar>
               <AvatarImage src="/placeholder.svg" alt="Dr. Elena Rodriguez" />

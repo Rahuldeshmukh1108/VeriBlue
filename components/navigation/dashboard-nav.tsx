@@ -53,7 +53,7 @@ export function DashboardNav({ userType }: DashboardNavProps) {
         <div className="flex items-center space-x-4">
           <Link href="/" className="flex items-center space-x-2">
             <Leaf className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">Carbon Fiesta</span>
+            <span className="text-xl font-bold">VeriBlue</span>
           </Link>
           <Badge variant="secondary">{userType.charAt(0).toUpperCase() + userType.slice(1)}</Badge>
         </div>
