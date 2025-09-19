@@ -1,8 +1,27 @@
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Shield,
   Users,
@@ -15,10 +34,24 @@ import {
   Activity,
   BarChart3,
   FileText,
+  ThumbsUp,
+  MapPin,
+  Calendar,
+  DollarSign,
+  Leaf,
   CheckCircle,
+  Clock,
+  User,
+  Check,
+  X,
+  LogOut,
+  UserCog,
 } from "lucide-react"
+import { useState } from "react"
 
 export default function AdminDashboard() {
+  const [verifiedProjects, setVerifiedProjects] = useState<Set<string>>(new Set())
+
   const verifiers = [
     {
       id: "VER-001",
@@ -29,6 +62,10 @@ export default function AdminDashboard() {
       rating: 4.9,
       status: "active",
       joinDate: "2023-03-15",
+      location: "San Francisco, CA",
+      experience: "8 years",
+      certifications: ["ISO 14064", "VCS", "Gold Standard"],
+      bio: "Dr. Sarah Chen is a leading expert in forestry carbon projects with over 8 years of experience in REDD+ methodology. She has verified over 45 projects across Southeast Asia and Latin America.",
     },
     {
       id: "VER-002",
@@ -39,6 +76,10 @@ export default function AdminDashboard() {
       rating: 4.7,
       status: "active",
       joinDate: "2023-05-20",
+      location: "Austin, TX",
+      experience: "12 years",
+      certifications: ["CDM", "VCS", "ACR"],
+      bio: "Professor Michael Rodriguez specializes in renewable energy carbon projects with extensive experience in wind and solar verification across North and South America.",
     },
     {
       id: "VER-003",
@@ -49,6 +90,10 @@ export default function AdminDashboard() {
       rating: 4.8,
       status: "pending",
       joinDate: "2024-01-10",
+      location: "Miami, FL",
+      experience: "6 years",
+      certifications: ["VCS", "Plan Vivo"],
+      bio: "Dr. Emma Thompson is a marine biologist turned carbon verifier, specializing in blue carbon ecosystems including mangroves, seagrass, and salt marshes.",
     },
   ]
 
@@ -101,6 +146,26 @@ export default function AdminDashboard() {
       status: "active",
       verifier: "Dr. Sarah Chen",
       lastUpdate: "2024-01-20",
+      location: "Amazon Basin, Brazil",
+      startDate: "2023-06-15",
+      endDate: "2028-06-15",
+      area: "12,500 hectares",
+      methodology: "VM0007 REDD+ Methodology Framework",
+      carbonPrice: "$15.50 per credit",
+      totalInvestment: "$2.5M",
+      verificationDate: "2024-01-15",
+      nextVerification: "2024-07-15",
+      description:
+        "Large-scale reforestation project in the Amazon rainforest focusing on native species restoration and biodiversity conservation. The project aims to sequester 50,000 tons of CO2 over 5 years while providing sustainable livelihoods for local communities.",
+      keyMetrics: {
+        treesPlanted: "125,000",
+        speciesCount: "45 native species",
+        communityJobs: "150 local jobs created",
+        biodiversityIndex: "High (8.5/10)",
+      },
+      verifierNotes:
+        "Excellent project implementation with strong community engagement. Monitoring systems are robust and data quality is high. Recommended for continued verification.",
+      riskAssessment: "Low risk - Well-established methodology, experienced developer, strong local partnerships",
     },
     {
       id: "PRJ-002",
@@ -111,6 +176,26 @@ export default function AdminDashboard() {
       status: "pending",
       verifier: "Prof. Michael Rodriguez",
       lastUpdate: "2024-01-18",
+      location: "Rajasthan, India",
+      startDate: "2023-09-01",
+      endDate: "2033-09-01",
+      area: "500 hectares",
+      methodology: "ACM0002 Grid-connected electricity generation",
+      carbonPrice: "$12.75 per credit",
+      totalInvestment: "$15M",
+      verificationDate: "Pending",
+      nextVerification: "2024-02-01",
+      description:
+        "Utility-scale solar photovoltaic power plant generating clean electricity for the regional grid. The project displaces fossil fuel-based electricity generation and contributes to India's renewable energy targets.",
+      keyMetrics: {
+        capacity: "50 MW",
+        annualGeneration: "85 GWh",
+        householdsServed: "45,000",
+        co2Avoided: "25,000 tons/year",
+      },
+      verifierNotes:
+        "Project documentation is comprehensive. Site visit completed successfully. Awaiting final grid connection approval before verification completion.",
+      riskAssessment: "Medium risk - Regulatory approvals pending, but technical implementation is sound",
     },
     {
       id: "PRJ-003",
@@ -121,6 +206,26 @@ export default function AdminDashboard() {
       status: "suspended",
       verifier: "Dr. Emma Thompson",
       lastUpdate: "2024-01-15",
+      location: "Texas, USA",
+      startDate: "2023-03-01",
+      endDate: "2043-03-01",
+      area: "2,000 hectares",
+      methodology: "ACM0002 Grid-connected electricity generation",
+      carbonPrice: "$14.25 per credit",
+      totalInvestment: "$45M",
+      verificationDate: "2023-12-10",
+      nextVerification: "On hold",
+      description:
+        "Large-scale wind energy project with 25 turbines generating clean electricity. Project currently suspended due to environmental impact assessment review.",
+      keyMetrics: {
+        capacity: "75 MW",
+        annualGeneration: "180 GWh",
+        householdsServed: "65,000",
+        co2Avoided: "35,000 tons/year",
+      },
+      verifierNotes:
+        "Technical implementation is excellent, but project suspended pending resolution of environmental concerns raised by local wildlife protection agency.",
+      riskAssessment: "High risk - Environmental compliance issues under review",
     },
   ]
 
@@ -154,26 +259,71 @@ export default function AdminDashboard() {
     },
   ]
 
+  const handleVerifyProject = (projectId: string) => {
+    setVerifiedProjects((prev) => new Set([...prev, projectId]))
+  }
+
+  const getProjectDetails = (projectId: string) => {
+    return projects.find((p) => p.id === projectId)
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            <h1 className="text-4xl font-bold text-gray-900">Admin Dashboard</h1>
             <p className="text-gray-600 mt-1">System oversight and management</p>
           </div>
-          <Button className="bg-slate-600 hover:bg-slate-700">
-            <Settings className="w-4 h-4 mr-2" />
-            System Settings
-          </Button>
+          <div className="flex items-center gap-4">
+            <Button className="bg-slate-600 hover:bg-slate-700">
+              <Settings className="w-4 h-4 mr-2" />
+              System Settings
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src="/admin-avatar.jpg" alt="Admin" />
+                    <AvatarFallback className="bg-blue-600 text-white">AD</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">Admin User</p>
+                    <p className="text-xs leading-none text-muted-foreground">admin@carbonfiesta.com</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <UserCog className="mr-2 h-4 w-4" />
+                  <span>Profile Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Account Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="border-blue-200 bg-white/80 backdrop-blur-sm">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Total Projects</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-blue-600" />
+                Total Projects
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-blue-600">1,247</div>
@@ -183,7 +333,10 @@ export default function AdminDashboard() {
 
           <Card className="border-emerald-200 bg-white/80 backdrop-blur-sm">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Active Verifiers</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-emerald-600" />
+                Active Verifiers
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-emerald-600">47</div>
@@ -193,7 +346,10 @@ export default function AdminDashboard() {
 
           <Card className="border-amber-200 bg-white/80 backdrop-blur-sm">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Total Credits</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-amber-600" />
+                Total Credits
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-amber-600">15.2M</div>
@@ -203,7 +359,10 @@ export default function AdminDashboard() {
 
           <Card className="border-red-200 bg-white/80 backdrop-blur-sm">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Open Disputes</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-red-600" />
+                Open Disputes
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-red-600">3</div>
@@ -268,15 +427,116 @@ export default function AdminDashboard() {
                             </TableCell>
                             <TableCell>
                               <div className="flex gap-2">
-                                <Button size="sm" variant="outline">
-                                  <Eye className="w-4 h-4" />
-                                </Button>
-                                {verifier.status === "pending" ? (
-                                  <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700">
-                                    <UserCheck className="w-4 h-4" />
+                                <Dialog>
+                                  <DialogTrigger asChild>
+                                    <Button size="sm" variant="outline" title="View verifier details">
+                                      <Eye className="w-4 h-4" />
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                                    <DialogHeader>
+                                      <DialogTitle className="flex items-center gap-2">
+                                        <User className="w-5 h-5 text-blue-600" />
+                                        Verifier Profile: {verifier.name}
+                                      </DialogTitle>
+                                      <DialogDescription>
+                                        Comprehensive verifier details and performance metrics
+                                      </DialogDescription>
+                                    </DialogHeader>
+
+                                    <div className="space-y-6">
+                                      {/* Verifier Overview */}
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <Card>
+                                          <CardHeader className="pb-3">
+                                            <CardTitle className="text-lg">Personal Information</CardTitle>
+                                          </CardHeader>
+                                          <CardContent className="space-y-3">
+                                            <div className="flex items-center gap-2">
+                                              <User className="w-4 h-4 text-gray-500" />
+                                              <span className="text-sm">{verifier.name}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                              <MapPin className="w-4 h-4 text-gray-500" />
+                                              <span className="text-sm">{verifier.location}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                              <Calendar className="w-4 h-4 text-gray-500" />
+                                              <span className="text-sm">Joined: {verifier.joinDate}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                              <Shield className="w-4 h-4 text-gray-500" />
+                                              <span className="text-sm">Experience: {verifier.experience}</span>
+                                            </div>
+                                          </CardContent>
+                                        </Card>
+
+                                        <Card>
+                                          <CardHeader className="pb-3">
+                                            <CardTitle className="text-lg">Performance Metrics</CardTitle>
+                                          </CardHeader>
+                                          <CardContent className="space-y-3">
+                                            <div className="flex justify-between">
+                                              <span className="text-sm text-gray-600">Projects Verified</span>
+                                              <span className="text-sm font-medium">{verifier.verified}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                              <span className="text-sm text-gray-600">Average Rating</span>
+                                              <span className="text-sm font-medium">{verifier.rating} ★</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                              <span className="text-sm text-gray-600">Specialization</span>
+                                              <span className="text-sm font-medium">{verifier.specialization}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                              <span className="text-sm text-gray-600">Status</span>
+                                              <Badge variant={verifier.status === "active" ? "default" : "secondary"}>
+                                                {verifier.status}
+                                              </Badge>
+                                            </div>
+                                          </CardContent>
+                                        </Card>
+                                      </div>
+
+                                      {/* Bio */}
+                                      <Card>
+                                        <CardHeader>
+                                          <CardTitle className="text-lg">Professional Background</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                          <p className="text-sm text-gray-700 leading-relaxed">{verifier.bio}</p>
+                                        </CardContent>
+                                      </Card>
+
+                                      {/* Certifications */}
+                                      <Card>
+                                        <CardHeader>
+                                          <CardTitle className="text-lg">Certifications</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                          <div className="flex flex-wrap gap-2">
+                                            {verifier.certifications.map((cert, index) => (
+                                              <Badge key={index} variant="outline" className="bg-blue-50">
+                                                {cert}
+                                              </Badge>
+                                            ))}
+                                          </div>
+                                        </CardContent>
+                                      </Card>
+                                    </div>
+                                  </DialogContent>
+                                </Dialog>
+
+                                {verifier.status === "active" ? (
+                                  <Button size="sm" className="bg-green-600 hover:bg-green-700" title="Active verifier">
+                                    <Check className="w-4 h-4" />
+                                  </Button>
+                                ) : verifier.status === "pending" ? (
+                                  <Button size="sm" className="bg-red-600 hover:bg-red-700" title="Pending approval">
+                                    <X className="w-4 h-4" />
                                   </Button>
                                 ) : (
-                                  <Button size="sm" variant="outline">
+                                  <Button size="sm" variant="outline" title="Suspended">
                                     <Ban className="w-4 h-4" />
                                   </Button>
                                 )}
@@ -380,32 +640,210 @@ export default function AdminDashboard() {
                             </TableCell>
                             <TableCell>{project.credits.toLocaleString()}</TableCell>
                             <TableCell>
-                              <Badge
-                                variant={
-                                  project.status === "active"
-                                    ? "default"
-                                    : project.status === "pending"
-                                      ? "secondary"
-                                      : "destructive"
-                                }
-                              >
-                                {project.status}
-                              </Badge>
+                              {verifiedProjects.has(project.id) ? (
+                                <Badge className="bg-green-100 text-green-800 border-green-300">Verified ✓</Badge>
+                              ) : (
+                                <Badge
+                                  variant={
+                                    project.status === "active"
+                                      ? "default"
+                                      : project.status === "pending"
+                                        ? "secondary"
+                                        : "destructive"
+                                  }
+                                >
+                                  {project.status}
+                                </Badge>
+                              )}
                             </TableCell>
                             <TableCell>
                               <div className="flex gap-2">
-                                <Button size="sm" variant="outline">
-                                  <Eye className="w-4 h-4" />
-                                </Button>
-                                {project.status === "pending" ? (
-                                  <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700">
-                                    <CheckCircle className="w-4 h-4" />
+                                <Dialog>
+                                  <DialogTrigger asChild>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      title="View detailed project report"
+                                      className="hover:bg-blue-50 bg-transparent"
+                                    >
+                                      <Eye className="w-4 h-4" />
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                                    <DialogHeader>
+                                      <DialogTitle className="flex items-center gap-2">
+                                        <FileText className="w-5 h-5 text-blue-600" />
+                                        Project Report: {project.name}
+                                      </DialogTitle>
+                                      <DialogDescription>
+                                        Comprehensive project details and verification report
+                                      </DialogDescription>
+                                    </DialogHeader>
+
+                                    <div className="space-y-6">
+                                      {/* Project Overview */}
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <Card>
+                                          <CardHeader className="pb-3">
+                                            <CardTitle className="text-lg">Project Overview</CardTitle>
+                                          </CardHeader>
+                                          <CardContent className="space-y-3">
+                                            <div className="flex items-center gap-2">
+                                              <MapPin className="w-4 h-4 text-gray-500" />
+                                              <span className="text-sm">{project.location}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                              <Calendar className="w-4 h-4 text-gray-500" />
+                                              <span className="text-sm">
+                                                {project.startDate} - {project.endDate}
+                                              </span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                              <Leaf className="w-4 h-4 text-gray-500" />
+                                              <span className="text-sm">Area: {project.area}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                              <DollarSign className="w-4 h-4 text-gray-500" />
+                                              <span className="text-sm">{project.carbonPrice}</span>
+                                            </div>
+                                          </CardContent>
+                                        </Card>
+
+                                        <Card>
+                                          <CardHeader className="pb-3">
+                                            <CardTitle className="text-lg">Verification Status</CardTitle>
+                                          </CardHeader>
+                                          <CardContent className="space-y-3">
+                                            <div className="flex items-center gap-2">
+                                              <User className="w-4 h-4 text-gray-500" />
+                                              <span className="text-sm">Verifier: {project.verifier}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                              <CheckCircle className="w-4 h-4 text-gray-500" />
+                                              <span className="text-sm">Last Verified: {project.verificationDate}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                              <Clock className="w-4 h-4 text-gray-500" />
+                                              <span className="text-sm">
+                                                Next Verification: {project.nextVerification}
+                                              </span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                              <FileText className="w-4 h-4 text-gray-500" />
+                                              <span className="text-sm">Methodology: {project.methodology}</span>
+                                            </div>
+                                          </CardContent>
+                                        </Card>
+                                      </div>
+
+                                      {/* Project Description */}
+                                      <Card>
+                                        <CardHeader>
+                                          <CardTitle className="text-lg">Project Description</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                          <p className="text-sm text-gray-700 leading-relaxed">{project.description}</p>
+                                        </CardContent>
+                                      </Card>
+
+                                      {/* Key Metrics */}
+                                      <Card>
+                                        <CardHeader>
+                                          <CardTitle className="text-lg">Key Performance Metrics</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                            {Object.entries(project.keyMetrics).map(([key, value]) => (
+                                              <div key={key} className="text-center p-3 bg-gray-50 rounded-lg">
+                                                <p className="text-sm font-medium text-gray-600 capitalize">
+                                                  {key.replace(/([A-Z])/g, " $1").trim()}
+                                                </p>
+                                                <p className="text-lg font-bold text-blue-600">{value}</p>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </CardContent>
+                                      </Card>
+
+                                      {/* Verifier Assessment */}
+                                      <Card>
+                                        <CardHeader>
+                                          <CardTitle className="text-lg">Verifier Assessment</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="space-y-4">
+                                          <div>
+                                            <h4 className="font-medium text-sm mb-2">Verification Notes:</h4>
+                                            <p className="text-sm text-gray-700 bg-blue-50 p-3 rounded-lg">
+                                              {project.verifierNotes}
+                                            </p>
+                                          </div>
+                                          <div>
+                                            <h4 className="font-medium text-sm mb-2">Risk Assessment:</h4>
+                                            <p
+                                              className={`text-sm p-3 rounded-lg ${
+                                                project.riskAssessment.includes("Low")
+                                                  ? "bg-green-50 text-green-800"
+                                                  : project.riskAssessment.includes("Medium")
+                                                    ? "bg-yellow-50 text-yellow-800"
+                                                    : "bg-red-50 text-red-800"
+                                              }`}
+                                            >
+                                              {project.riskAssessment}
+                                            </p>
+                                          </div>
+                                        </CardContent>
+                                      </Card>
+
+                                      {/* Financial Information */}
+                                      <Card>
+                                        <CardHeader>
+                                          <CardTitle className="text-lg">Financial Summary</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div className="text-center p-3 bg-emerald-50 rounded-lg">
+                                              <p className="text-sm font-medium text-gray-600">Total Investment</p>
+                                              <p className="text-xl font-bold text-emerald-600">
+                                                {project.totalInvestment}
+                                              </p>
+                                            </div>
+                                            <div className="text-center p-3 bg-blue-50 rounded-lg">
+                                              <p className="text-sm font-medium text-gray-600">Carbon Credits</p>
+                                              <p className="text-xl font-bold text-blue-600">
+                                                {project.credits.toLocaleString()}
+                                              </p>
+                                            </div>
+                                            <div className="text-center p-3 bg-purple-50 rounded-lg">
+                                              <p className="text-sm font-medium text-gray-600">Estimated Value</p>
+                                              <p className="text-xl font-bold text-purple-600">
+                                                $
+                                                {(
+                                                  project.credits *
+                                                  Number.parseFloat(project.carbonPrice.replace("$", "").split(" ")[0])
+                                                ).toLocaleString()}
+                                              </p>
+                                            </div>
+                                          </div>
+                                        </CardContent>
+                                      </Card>
+                                    </div>
+                                  </DialogContent>
+                                </Dialog>
+
+                                {!verifiedProjects.has(project.id) && project.status !== "suspended" ? (
+                                  <Button
+                                    size="sm"
+                                    className="bg-emerald-600 hover:bg-emerald-700"
+                                    title="Verify project after reviewing report"
+                                    onClick={() => handleVerifyProject(project.id)}
+                                  >
+                                    <ThumbsUp className="w-4 h-4" />
                                   </Button>
-                                ) : (
-                                  <Button size="sm" variant="outline">
+                                ) : project.status === "suspended" ? (
+                                  <Button size="sm" variant="outline" title="Suspend project">
                                     <Ban className="w-4 h-4" />
                                   </Button>
-                                )}
+                                ) : null}
                               </div>
                             </TableCell>
                           </TableRow>
@@ -455,7 +893,10 @@ export default function AdminDashboard() {
                 {/* Project Stats */}
                 <Card className="bg-white/80 backdrop-blur-sm">
                   <CardHeader>
-                    <CardTitle className="text-lg">Project Statistics</CardTitle>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <BarChart3 className="w-5 h-5 text-blue-600" />
+                      Project Statistics
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex justify-between">
@@ -473,6 +914,10 @@ export default function AdminDashboard() {
                     <div className="flex justify-between">
                       <span className="text-sm">Total Credits</span>
                       <span className="text-sm font-medium">15.2M</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Verified Today</span>
+                      <span className="text-sm font-medium text-green-600">{verifiedProjects.size}</span>
                     </div>
                   </CardContent>
                 </Card>

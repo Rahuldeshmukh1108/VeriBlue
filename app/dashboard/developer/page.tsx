@@ -135,7 +135,7 @@ export default function DeveloperDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
+      <div className="min-h-screen bg-background">
         <SkipLink />
         <KeyboardNavigation />
         <DashboardNav userType="developer" />
@@ -148,7 +148,7 @@ export default function DeveloperDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
+    <div className="min-h-screen bg-background">
       <SkipLink />
       <KeyboardNavigation />
       <DashboardNav userType="developer" />
@@ -157,8 +157,8 @@ export default function DeveloperDashboard() {
         <BreadcrumbNav />
 
         <div className="mb-8">
-          <h1 className="text-5xl font-bold mb-2 text-white">Developer Dashboard</h1>
-          <p className="text-slate-300 text-lg">
+          <h1 className="text-5xl font-bold mb-6 text-black">Developer Dashboard</h1>
+          <p className="text-gray-900 text-lg">
             Manage your carbon credit projects and track your environmental impact
           </p>
         </div>
@@ -217,7 +217,7 @@ export default function DeveloperDashboard() {
           </Card>
         </div>
 
-        <Card className="mb-8 bg-slate-800/80 backdrop-blur-sm border-slate-700">
+        <Card className="mb-8 bg-gray-600/80 backdrop-blur-sm border-black-700">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -248,7 +248,7 @@ export default function DeveloperDashboard() {
                 {projects.map((project) => (
                   <div
                     key={project.id}
-                    className="bg-slate-700/50 rounded-lg overflow-hidden border border-slate-600 hover:shadow-lg transition-all duration-300"
+                    className="bg-slate-900/50 rounded-lg overflow-hidden border border-slate-600 hover:shadow-lg transition-all duration-300"
                   >
                     {/* Project Image */}
                     <div className="relative h-48">
