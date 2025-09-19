@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -21,34 +20,55 @@ const roles = [
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
-    name: "",
+    fullName: "",
     email: "",
     password: "",
     confirmPassword: "",
     role: "",
   })
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setError(null) // Clear any previous errors
 
-    // Simulate signup process
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    try {
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
 
-    // Redirect based on role
-    const dashboardPath =
-      formData.role === "admin"
-        ? "/dashboard/admin"
-        : formData.role === "verifier"
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Signup failed")
+      }
+
+      // If signup is successful, get the data and redirect
+      const userData = await response.json()
+      console.log("Signup successful, user:", userData)
+
+      // Redirect based on role
+      const dashboardPath =
+        formData.role === "admin"
+          ? "/dashboard/admin"
+          : formData.role === "verifier"
           ? "/dashboard/verifier"
           : formData.role === "buyer"
-            ? "/dashboard/buyer"
-            : "/dashboard/developer"
+          ? "/dashboard/buyer"
+          : "/dashboard/developer"
 
-    router.push(dashboardPath)
-    setIsLoading(false)
+      router.push(dashboardPath)
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -73,12 +93,12 @@ export default function SignupPage() {
           <CardContent>
             <form onSubmit={handleSignup} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="fullName">Full Name</Label>
                 <Input
-                  id="name"
+                  id="fullName"
                   placeholder="Your full name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  value={formData.fullName}
+                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                   required
                 />
               </div>
