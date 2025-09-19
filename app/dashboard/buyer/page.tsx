@@ -1,509 +1,428 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { DashboardSkeleton } from "@/components/loading/dashboard-skeleton"
-import { EmptyMarketplace } from "@/components/empty-states/empty-marketplace"
-import { BreadcrumbNav } from "@/components/navigation/breadcrumb-nav"
-import { SkipLink } from "@/components/accessibility/skip-link"
-import { ScreenReaderOnly } from "@/components/accessibility/screen-reader-only"
-import { KeyboardNavigation } from "@/components/accessibility/keyboard-navigation"
-import { useToast } from "@/hooks/use-toast"
 import {
-  ShoppingCart,
-  TrendingUp,
   Leaf,
-  Award,
-  Search,
-  Filter,
+  TrendingUp,
+  Building2,
+  DollarSign,
+  ArrowUpRight,
+  ArrowDownRight,
+  Globe,
+  Calendar,
   MapPin,
-  Star,
-  Store,
-  CreditCard,
-  Trophy,
-  BarChart3,
+  User,
+  Settings,
+  ShoppingCart,
 } from "lucide-react"
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts"
 import Link from "next/link"
 
+// TypeScript interfaces for data structures
+interface KPIData {
+  activeCredits: number
+  totalCO2Offset: number
+  projectsSupported: number
+  totalSpent: number
+}
+
+interface PortfolioProject {
+  id: string
+  name: string
+  type: string
+  credits: number
+  color: string
+}
+
+interface Transaction {
+  id: string
+  type: "purchase" | "retirement"
+  project: string
+  credits: number
+  amount: number
+  date: string
+  status: "completed" | "pending" | "failed"
+}
+
+interface UserProfile {
+  name: string
+  company: string
+  avatar?: string
+}
+
+// Mock data
+const userProfile: UserProfile = {
+  name: "Sarah Chen",
+  company: "EcoTech Solutions",
+  avatar: "/placeholder-user.jpg",
+}
+
+const kpiData: KPIData = {
+  activeCredits: 2847,
+  totalCO2Offset: 15420,
+  projectsSupported: 12,
+  totalSpent: 284750,
+}
+
+const portfolioData: PortfolioProject[] = [
+  { id: "1", name: "Mangrove Restoration", type: "Blue Carbon", credits: 1200, color: "var(--chart-1)" },
+  { id: "2", name: "Solar Farm", type: "Renewable Energy", credits: 850, color: "var(--chart-2)" },
+  { id: "3", name: "Forest Conservation", type: "REDD+", credits: 650, color: "var(--chart-3)" },
+  { id: "4", name: "Wind Energy", type: "Renewable Energy", credits: 147, color: "var(--chart-4)" },
+]
+
+const recentTransactions: Transaction[] = [
+  {
+    id: "1",
+    type: "purchase",
+    project: "Amazon Rainforest Conservation",
+    credits: 500,
+    amount: 12500,
+    date: "2024-01-15",
+    status: "completed",
+  },
+  {
+    id: "2",
+    type: "retirement",
+    project: "Sundarbans Mangrove Restoration",
+    credits: 250,
+    amount: 6250,
+    date: "2024-01-12",
+    status: "completed",
+  },
+  {
+    id: "3",
+    type: "purchase",
+    project: "Kenya Solar Farm",
+    credits: 300,
+    amount: 7800,
+    date: "2024-01-10",
+    status: "pending",
+  },
+  {
+    id: "4",
+    type: "retirement",
+    project: "Brazilian Wind Farm",
+    credits: 150,
+    amount: 3900,
+    date: "2024-01-08",
+    status: "completed",
+  },
+  {
+    id: "5",
+    type: "purchase",
+    project: "Indonesian Peatland Restoration",
+    credits: 400,
+    amount: 10400,
+    date: "2024-01-05",
+    status: "completed",
+  },
+]
+
 export default function BuyerDashboard() {
-  const [isLoading, setIsLoading] = useState(true)
-  const [marketplaceProjects, setMarketplaceProjects] = useState([])
-  const [searchTerm, setSearchTerm] = useState("")
-  const { success, error } = useToast()
-
-  const activeLeases = [
-    {
-      id: "LEASE-001",
-      project: "Amazon Reforestation Initiative",
-      credits: 10000,
-      price: 25,
-      progress: 75,
-      impact: "2,500 trees planted",
-      expires: "2024-06-15",
-    },
-    {
-      id: "LEASE-002",
-      project: "Solar Farm Development",
-      credits: 5000,
-      price: 30,
-      progress: 45,
-      impact: "15 MWh clean energy",
-      expires: "2024-08-20",
-    },
-  ]
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 1500))
-
-        const mockProjects = [
-          {
-            id: "PRJ-001",
-            name: "Wind Farm Project Beta",
-            developer: "GreenEnergy Corp",
-            type: "Renewable Energy",
-            location: "Texas, USA",
-            credits: 25000,
-            price: 28,
-            rating: 4.8,
-            verified: true,
-            image: "/wind-farm-renewable-energy.jpg",
-          },
-          {
-            id: "PRJ-002",
-            name: "Mangrove Restoration",
-            developer: "OceanTech Solutions",
-            type: "Blue Carbon",
-            location: "Philippines",
-            credits: 15000,
-            price: 35,
-            rating: 4.9,
-            verified: true,
-            image: "/mangrove-restoration-blue-carbon.jpg",
-          },
-          {
-            id: "PRJ-003",
-            name: "Biogas Plant Initiative",
-            developer: "CleanTech Industries",
-            type: "Waste Management",
-            location: "Germany",
-            credits: 8000,
-            price: 22,
-            rating: 4.6,
-            verified: true,
-            image: "/biogas-plant-waste-management.jpg",
-          },
-        ]
-
-        setMarketplaceProjects(mockProjects)
-        setIsLoading(false)
-        success("Dashboard loaded", "Latest marketplace data has been updated.")
-      } catch (err) {
-        error("Failed to load dashboard", "Please try refreshing the page.")
-        setIsLoading(false)
-      }
-    }
-
-    loadData()
-  }, [success, error])
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-emerald-50">
-        <SkipLink />
-        <KeyboardNavigation />
-        <div className="max-w-7xl mx-auto p-6">
-          <DashboardSkeleton />
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-emerald-50">
-      <SkipLink />
-      <KeyboardNavigation />
-
-      <div className="max-w-7xl mx-auto p-6 space-y-6">
-        <BreadcrumbNav />
-
-        {/* Header */}
-        <header className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Buyer Dashboard</h1>
-            <p className="text-gray-600 mt-1">Discover and lease carbon credits</p>
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+      {/* Navigation Header */}
+      <nav className="border-b bg-card/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Leaf className="h-8 w-8 text-primary" />
+            <span className="text-2xl font-bold text-foreground">Carbon Fiesta</span>
           </div>
-          <nav className="flex gap-3" role="navigation" aria-label="Dashboard actions">
-            <Link href="/dashboard/buyer/marketplace">
-              <Button variant="outline" className="flex items-center gap-2 bg-transparent">
-                <Store className="w-4 h-4" aria-hidden="true" />
+          <div className="flex items-center space-x-4">
+            {/* Added functional navigation buttons */}
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/dashboard/buyer/marketplace">
+                <Globe className="h-4 w-4 mr-2" />
                 Marketplace
-                <ScreenReaderOnly>- Browse carbon credit projects</ScreenReaderOnly>
-              </Button>
-            </Link>
-            <Link href="/dashboard/buyer/portfolio">
-              <Button variant="outline" className="flex items-center gap-2 bg-transparent">
-                <BarChart3 className="w-4 h-4" aria-hidden="true" />
-                Portfolio
-                <ScreenReaderOnly>- View your credit portfolio</ScreenReaderOnly>
-              </Button>
-            </Link>
-            <Link href="/dashboard/buyer/rewards">
-              <Button variant="outline" className="flex items-center gap-2 bg-transparent">
-                <Trophy className="w-4 h-4" aria-hidden="true" />
-                Rewards
-                <ScreenReaderOnly>- Check your achievements</ScreenReaderOnly>
-              </Button>
-            </Link>
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              <ShoppingCart className="w-4 h-4 mr-2" aria-hidden="true" />
-              View Cart (3)
-              <ScreenReaderOnly>- 3 items in shopping cart</ScreenReaderOnly>
+              </Link>
             </Button>
-          </nav>
-        </header>
-
-        {/* Quick Navigation Cards */}
-        <section aria-label="Quick navigation">
-          <ScreenReaderOnly>
-            <h2>Quick Navigation</h2>
-          </ScreenReaderOnly>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <Link href="/dashboard/buyer/marketplace">
-              <Card className="cursor-pointer hover:shadow-md transition-shadow border-blue-200 bg-white/80 backdrop-blur-sm focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2">
-                <CardContent className="p-4 text-center">
-                  <Store className="w-8 h-8 text-blue-600 mx-auto mb-2" aria-hidden="true" />
-                  <h3 className="font-semibold text-gray-900">Marketplace</h3>
-                  <p className="text-sm text-gray-600">Browse projects</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link href="/dashboard/buyer/portfolio">
-              <Card className="cursor-pointer hover:shadow-md transition-shadow border-emerald-200 bg-white/80 backdrop-blur-sm focus-within:ring-2 focus-within:ring-emerald-500 focus-within:ring-offset-2">
-                <CardContent className="p-4 text-center">
-                  <BarChart3 className="w-8 h-8 text-emerald-600 mx-auto mb-2" aria-hidden="true" />
-                  <h3 className="font-semibold text-gray-900">Portfolio</h3>
-                  <p className="text-sm text-gray-600">Track leases</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link href="/dashboard/buyer/rewards">
-              <Card className="cursor-pointer hover:shadow-md transition-shadow border-amber-200 bg-white/80 backdrop-blur-sm focus-within:ring-2 focus-within:ring-amber-500 focus-within:ring-offset-2">
-                <CardContent className="p-4 text-center">
-                  <Trophy className="w-8 h-8 text-amber-600 mx-auto mb-2" aria-hidden="true" />
-                  <h3 className="font-semibold text-gray-900">Rewards</h3>
-                  <p className="text-sm text-gray-600">Earn badges</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Card className="border-purple-200 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-4 text-center">
-                <CreditCard className="w-8 h-8 text-purple-600 mx-auto mb-2" aria-hidden="true" />
-                <h3 className="font-semibold text-gray-900">Quick Lease</h3>
-                <p className="text-sm text-gray-600">Fast checkout</p>
-              </CardContent>
-            </Card>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/dashboard/buyer/profile">
+                <User className="h-4 w-4 mr-2" />
+                Profile
+              </Link>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/dashboard/buyer/settings">
+                <Settings className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Avatar>
+              <AvatarImage src={userProfile.avatar || "/placeholder.svg"} alt={userProfile.name} />
+              <AvatarFallback>
+                {userProfile.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
+              </AvatarFallback>
+            </Avatar>
           </div>
-        </section>
+        </div>
+      </nav>
 
-        {/* Stats Cards */}
-        <section aria-label="Dashboard statistics">
-          <ScreenReaderOnly>
-            <h2>Your Statistics</h2>
-          </ScreenReaderOnly>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card className="border-blue-200 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">Active Leases</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-blue-600" aria-label="15 active leases">
-                  15
-                </div>
-                <p className="text-xs text-gray-500 mt-1">2 expiring soon</p>
-              </CardContent>
-            </Card>
+      <div className="container mx-auto px-6 py-8">
+        {/* Welcome Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, {userProfile.name}</h1>
+          <p className="text-muted-foreground">
+            {/* Updated messaging to emphasize ownership and permanent offsetting */}
+            Own verified carbon credits and make a permanent environmental impact with {userProfile.company}
+          </p>
+        </div>
 
-            <Card className="border-emerald-200 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">Total Credits</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-emerald-600" aria-label="125,000 total credits">
-                  125K
-                </div>
-                <p className="text-xs text-gray-500 mt-1">Leased credits</p>
-              </CardContent>
-            </Card>
+        {/* KPI Widgets - 4 Column Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="border-primary/20 bg-primary/5">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Owned Credits</CardTitle>
+              <Leaf className="h-4 w-4 text-primary" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-primary">{kpiData.activeCredits.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground">+12% from last month</p>
+            </CardContent>
+          </Card>
 
-            <Card className="border-amber-200 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">CO₂ Offset</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-amber-600" aria-label="125 tons of CO2 offset">
-                  125
-                </div>
-                <p className="text-xs text-gray-500 mt-1">Tons CO₂ offset</p>
-              </CardContent>
-            </Card>
+          <Card className="border-secondary/20 bg-secondary/5">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total CO₂ Offset</CardTitle>
+              <TrendingUp className="h-4 w-4 text-secondary" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-secondary">{kpiData.totalCO2Offset.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground">tonnes permanently retired</p>
+            </CardContent>
+          </Card>
 
-            <Card className="border-purple-200 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">Impact Score</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-purple-600" aria-label="A plus environmental rating">
-                  A+
-                </div>
-                <p className="text-xs text-gray-500 mt-1">Environmental rating</p>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
+          <Card className="border-accent/20 bg-accent/5">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Projects Supported</CardTitle>
+              <Building2 className="h-4 w-4 text-accent-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-accent-foreground">{kpiData.projectsSupported}</div>
+              <p className="text-xs text-muted-foreground">across 8 countries</p>
+            </CardContent>
+          </Card>
 
-        {/* Main Content */}
-        <main id="main-content" tabIndex={-1} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Marketplace */}
-          <section className="lg:col-span-2" aria-label="Carbon credit marketplace">
-            <Card className="bg-white/80 backdrop-blur-sm">
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <Search className="w-5 h-5 text-blue-600" aria-hidden="true" />
-                      Carbon Credit Marketplace
-                    </CardTitle>
-                    <CardDescription>Discover verified carbon credit projects</CardDescription>
-                  </div>
-                  <Button variant="outline" size="sm" aria-label="Open filters">
-                    <Filter className="w-4 h-4 mr-2" aria-hidden="true" />
-                    Filters
-                  </Button>
-                </div>
+          <Card className="border-chart-4/20 bg-chart-4/5">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Spent</CardTitle>
+              <DollarSign className="h-4 w-4 text-chart-4" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-chart-4">${kpiData.totalSpent.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground">lifetime investment</p>
+            </CardContent>
+          </Card>
+        </div>
 
-                {/* Search and Filters */}
-                <div className="flex gap-4 mt-4">
-                  <div className="flex-1">
-                    <label htmlFor="project-search" className="sr-only">
-                      Search projects
-                    </label>
-                    <Input
-                      id="project-search"
-                      placeholder="Search projects..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      aria-describedby="search-help"
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Portfolio Snapshot */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="h-5 w-5 text-primary" />
+                Portfolio Snapshot
+              </CardTitle>
+              <CardDescription>Credit breakdown by project type</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={portfolioData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={100}
+                      paddingAngle={5}
+                      dataKey="credits"
+                    >
+                      {portfolioData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value: number) => [`${value} credits`, "Credits"]}
+                      labelFormatter={(label) => `${label}`}
                     />
-                    <div id="search-help" className="sr-only">
-                      Search for carbon credit projects by name, location, or type
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="mt-4 space-y-2">
+                {portfolioData.map((project) => (
+                  <div key={project.id} className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: project.color }} />
+                      <span className="text-sm font-medium">{project.type}</span>
                     </div>
+                    <span className="text-sm text-muted-foreground">{project.credits} credits</span>
                   </div>
-                  <Select>
-                    <SelectTrigger className="w-40" aria-label="Filter by project type">
-                      <SelectValue placeholder="Project Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="forestry">Forestry</SelectItem>
-                      <SelectItem value="renewable">Renewable Energy</SelectItem>
-                      <SelectItem value="waste">Waste Management</SelectItem>
-                      <SelectItem value="blue">Blue Carbon</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select>
-                    <SelectTrigger className="w-32" aria-label="Filter by location">
-                      <SelectValue placeholder="Location" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="usa">USA</SelectItem>
-                      <SelectItem value="brazil">Brazil</SelectItem>
-                      <SelectItem value="germany">Germany</SelectItem>
-                      <SelectItem value="philippines">Philippines</SelectItem>
-                    </SelectContent>
-                  </Select>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Impact Summary */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-secondary" />
+                Impact Summary
+              </CardTitle>
+              <CardDescription>Your environmental contribution</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Carbon Neutrality Goal</span>
+                  <span>68%</span>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {marketplaceProjects.length === 0 ? (
-                  <EmptyMarketplace />
-                ) : (
-                  <div role="list" aria-label="Available carbon credit projects">
-                    {marketplaceProjects.map((project) => (
-                      <article
-                        key={project.id}
-                        className="border rounded-lg p-4 hover:shadow-md transition-shadow focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
-                        role="listitem"
+                <Progress value={68} className="h-2" />
+                <p className="text-xs text-muted-foreground">10,480 tonnes remaining to reach annual target</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center p-4 bg-muted/50 rounded-lg">
+                  <div className="text-2xl font-bold text-primary">520</div>
+                  <div className="text-xs text-muted-foreground">Cars off road equivalent</div>
+                </div>
+                <div className="text-center p-4 bg-muted/50 rounded-lg">
+                  <div className="text-2xl font-bold text-secondary">1.2M</div>
+                  <div className="text-xs text-muted-foreground">Trees planted equivalent</div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="font-medium">Recent Milestones</h4>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Badge variant="secondary" className="w-2 h-2 p-0 rounded-full" />
+                    <span>Achieved 50% carbon neutrality</span>
+                    <span className="text-muted-foreground ml-auto">Dec 2024</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Badge variant="secondary" className="w-2 h-2 p-0 rounded-full" />
+                    <span>Supported 10+ projects</span>
+                    <span className="text-muted-foreground ml-auto">Nov 2024</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Recent Transactions */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-accent-foreground" />
+              Recent Transactions
+            </CardTitle>
+            <CardDescription>Your latest credit purchases and retirements</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Project</TableHead>
+                  <TableHead>Credits</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recentTransactions.map((transaction) => (
+                  <TableRow key={transaction.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {transaction.type === "purchase" ? (
+                          <ArrowDownRight className="h-4 w-4 text-primary" />
+                        ) : (
+                          <ArrowUpRight className="h-4 w-4 text-secondary" />
+                        )}
+                        <span className="capitalize">{transaction.type}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">{transaction.project}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>{transaction.credits.toLocaleString()}</TableCell>
+                    <TableCell>${transaction.amount.toLocaleString()}</TableCell>
+                    <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          transaction.status === "completed"
+                            ? "default"
+                            : transaction.status === "pending"
+                              ? "secondary"
+                              : "destructive"
+                        }
                       >
-                        <div className="flex gap-4">
-                          <img
-                            src={project.image || "/placeholder.svg"}
-                            alt={`${project.name} project image`}
-                            className="w-24 h-24 rounded-lg object-cover"
-                          />
-                          <div className="flex-1">
-                            <div className="flex justify-between items-start mb-2">
-                              <div>
-                                <h3 className="font-semibold text-gray-900">{project.name}</h3>
-                                <p className="text-sm text-gray-600">by {project.developer}</p>
-                              </div>
-                              <div className="text-right">
-                                <div
-                                  className="text-lg font-bold text-blue-600"
-                                  aria-label={`$${project.price} per credit`}
-                                >
-                                  ${project.price}
-                                </div>
-                                <p className="text-xs text-gray-500">per credit</p>
-                              </div>
-                            </div>
+                        {transaction.status}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
 
-                            <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
-                              <div className="flex items-center gap-1">
-                                <MapPin className="w-4 h-4" aria-hidden="true" />
-                                <span>{project.location}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" aria-hidden="true" />
-                                <span aria-label={`${project.rating} out of 5 stars`}>{project.rating}</span>
-                              </div>
-                              {project.verified && (
-                                <Badge variant="default" className="bg-emerald-100 text-emerald-800">
-                                  <ScreenReaderOnly>Project is </ScreenReaderOnly>
-                                  Verified
-                                </Badge>
-                              )}
-                            </div>
-
-                            <div className="flex justify-between items-center">
-                              <div>
-                                <span className="text-sm font-medium">
-                                  {project.credits.toLocaleString()} credits available
-                                </span>
-                                <Badge variant="outline" className="ml-2">
-                                  {project.type}
-                                </Badge>
-                              </div>
-                              <div className="flex gap-2">
-                                <Button variant="outline" size="sm" aria-label={`View details for ${project.name}`}>
-                                  View Details
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  className="bg-blue-600 hover:bg-blue-700"
-                                  aria-label={`Lease credits from ${project.name}`}
-                                >
-                                  Lease Credits
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </section>
-
-          {/* Sidebar */}
-          <aside className="space-y-6" aria-label="Dashboard sidebar">
-            {/* Active Leases */}
-            <section aria-label="Your active leases">
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-emerald-600" aria-hidden="true" />
-                    Active Leases
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {activeLeases.map((lease) => (
-                    <article key={lease.id} className="p-3 bg-gray-50 rounded-lg">
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-medium text-sm">{lease.project}</h4>
-                        <Badge variant="outline" aria-label={`${lease.credits.toLocaleString()} credits`}>
-                          {lease.credits.toLocaleString()}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-gray-600 mb-2">{lease.impact}</p>
-                      <div className="flex justify-between text-xs mb-2">
-                        <span>Progress</span>
-                        <span aria-label={`${lease.progress} percent complete`}>{lease.progress}%</span>
-                      </div>
-                      <Progress
-                        value={lease.progress}
-                        className="h-2 mb-2"
-                        aria-label={`Project progress: ${lease.progress}%`}
-                      />
-                      <p className="text-xs text-gray-500">Expires: {lease.expires}</p>
-                    </article>
-                  ))}
-                </CardContent>
-              </Card>
-            </section>
-
-            {/* Impact Summary */}
-            <section aria-label="Your environmental impact">
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Leaf className="w-5 h-5 text-emerald-600" aria-hidden="true" />
-                    Impact Summary
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-center p-4 bg-emerald-50 rounded-lg">
-                    <Award className="w-8 h-8 text-emerald-600 mx-auto mb-2" aria-hidden="true" />
-                    <p className="font-semibold text-emerald-800">Climate Champion</p>
-                    <p className="text-xs text-emerald-600">Top 5% of buyers</p>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-sm">Equivalent to:</span>
-                    </div>
-                    <dl className="text-sm space-y-1">
-                      <div className="flex justify-between">
-                        <dt>
-                          <span aria-hidden="true">🚗</span> Cars off road
-                        </dt>
-                        <dd className="font-medium" aria-label="27 cars worth of emissions offset">
-                          27
-                        </dd>
-                      </div>
-                      <div className="flex justify-between">
-                        <dt>
-                          <span aria-hidden="true">🏠</span> Homes powered
-                        </dt>
-                        <dd className="font-medium" aria-label="15 homes worth of energy">
-                          15
-                        </dd>
-                      </div>
-                      <div className="flex justify-between">
-                        <dt>
-                          <span aria-hidden="true">🌳</span> Trees planted
-                        </dt>
-                        <dd className="font-medium" aria-label="3,125 trees planted equivalent">
-                          3,125
-                        </dd>
-                      </div>
-                    </dl>
-                  </div>
-                </CardContent>
-              </Card>
-            </section>
-          </aside>
-        </main>
+        {/* Quick Access Navigation section */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ArrowUpRight className="h-5 w-5 text-primary" />
+              Quick Actions
+            </CardTitle>
+            <CardDescription>Navigate to your most common tasks</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Made all quick action buttons functional with proper links */}
+              <Button className="h-20 flex-col gap-2 bg-transparent" variant="outline" asChild>
+                <Link href="/dashboard/buyer/marketplace">
+                  <Globe className="h-6 w-6" />
+                  <span>Explore Marketplace</span>
+                </Link>
+              </Button>
+              <Button className="h-20 flex-col gap-2 bg-transparent" variant="outline" asChild>
+                <Link href="/dashboard/buyer/portfolio">
+                  <Building2 className="h-6 w-6" />
+                  <span>View Portfolio</span>
+                </Link>
+              </Button>
+              <Button className="h-20 flex-col gap-2 bg-transparent" variant="outline" asChild>
+                <Link href="/dashboard/buyer/checkout">
+                  <ShoppingCart className="h-6 w-6" />
+                  <span>Purchase Credits</span>
+                </Link>
+              </Button>
+              <Button className="h-20 flex-col gap-2 bg-transparent" variant="outline" asChild>
+                <Link href="/dashboard/buyer/profile">
+                  <User className="h-6 w-6" />
+                  <span>My Profile</span>
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
